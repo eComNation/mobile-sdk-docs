@@ -29,6 +29,24 @@ includes:
   - android/change_password
   - android/profile
   - android/my_favourites
+  - ios/ios_doc
+  - ios/config
+  - ios/home_screen
+  - ios/navigation_menu
+  - ios/product_listing
+  - ios/category_listing
+  - ios/product_details
+  - ios/cart_checkout
+  - ios/contact_us
+  - ios/login
+  - ios/sign_up
+  - ios/forgot_password
+  - ios/my_account
+  - ios/my_orders
+  - ios/addresses
+  - ios/change_password
+  - ios/profile
+  - ios/my_favourites
 
 search: true
 ---
