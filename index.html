@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <title>API Reference</title>
+    <title>eComNation mobile developer docs.</title>
 
     <style>
       .highlight table td { padding: 5px; }
@@ -91,7 +91,7 @@
       <script src="javascripts/all.js"></script>
   </head>
 
-  <body class="index" data-languages="[&quot;shell&quot;,&quot;ruby&quot;,&quot;python&quot;,&quot;javascript&quot;]">
+  <body class="index" data-languages="[&quot;API&quot;]">
     <a href="#" id="nav-button">
       <span>
         NAV
@@ -101,10 +101,7 @@
     <div class="tocify-wrapper">
       <img src="images/logo.png" alt="Logo" />
         <div class="lang-selector">
-              <a href="#" data-language-name="shell">shell</a>
-              <a href="#" data-language-name="ruby">ruby</a>
-              <a href="#" data-language-name="python">python</a>
-              <a href="#" data-language-name="javascript">javascript</a>
+              <a href="#" data-language-name="API">API</a>
         </div>
         <div class="search">
           <input type="text" class="search" id="input-search" placeholder="Search">
@@ -120,229 +117,1615 @@
     <div class="page-wrapper">
       <div class="dark-box"></div>
       <div class="content">
-        <h1 id="introduction">Introduction</h1>
+        
+          <h1 id="1-android-store-app-documentation">1. Android Store App Documentation</h1>
 
-<p>Welcome to the Kittn API! You can use our API to access Kittn API endpoints, which can get information on various cats, kittens, and breeds in our database.</p>
+<h2 id="1-pre-requisites">1. Pre-requisites</h2>
 
-<p>We have language bindings in Shell, Ruby, and Python! You can view code examples in the dark area to the right, and you can switch the programming language of the examples with the tabs in the top right.</p>
+<ol>
+<li>An xml file, named as config.xml, is used to store important data regarding the store. This data includes store related URLs, keys, app color values, settings to enable/disable optional features throughout the app.</li>
+<li>A base URL which points to the app server which is used for all API requests to fetch and send the data to and from the sever.
+For example, a store with name “ABCD” will have a server URL of the form,
+<strong>https://abcd.my39shop.com/</strong>
+The same will be used in all sample API call URLs in this document.</li>
+<li>A store can be of three types, which depends on the use of extra API calls to get additional product data in the product detail screen.</li>
+<li>A normal store only needs the base URL for all its operations.</li>
+<li>A Jewelry store app requires an additional call to the jewelry app server. The URL is, <strong>http://jewelcommerce.my39shop.com/</strong></li>
+<li>A market place app requires an additional call to the market place server. The URL is,<strong>http://marketplace.my39shop.com/</strong></li>
+<li>To register ratings and reviews for products we use reviews app. The URL is,
+<strong>http://reviews.my39shop.com/</strong></li>
+<li>Throughout the app Gson library is used to serialize and deserialize Java objects to (and from) JSON. All the APIs return a JSON string response which is then converted into java objects using an instance of Gson.</li>
+<li>Volley library is used throughout the app to make API calls. Five different methods, namely GET, PUT, PATCH, POST and DELETE are used for different data operations. These methods are written at a common location and then used from different screens using an instance of a CallBack interface to return the response of the API request to its calling screen.</li>
+<li>Picasso library is used for all image related operations through the app.</li>
+<li>Throughout the app the data is shared among screens using the shared preferences. For example a local copy of customer’s cart is maintained in the shared preferences, which is later used in various screens to display cart count and also in cart screen to display the content of the cart.</li>
+</ol>
 
-<p>This example API documentation page was created with <a href="https://github.com/tripit/slate">Slate</a>. Feel free to edit it and use it as a base for your own API&rsquo;s documentation.</p>
+          <h2 id="2-config-file">2. Config File</h2>
 
-<h1 id="authentication">Authentication</h1>
+<p>Config file is an xml file containing different store related values in boolean, color, dimensions, string, string arrays.</p>
+
+<h3 id="boolean-values">Boolean values</h3>
+
+<ol>
+<li><em>has_display_option</em> :
+If set to true, there will be a button displayed in listing page with which customer can change the way products are displayed (either list view or grid view) else button will be hidden.</li>
+<li><em>show_favourite_listing</em> :
+If set to true, there will be a favorite icon displayed on every product in product listing page with which customer can directly add a product to his/her favorite list.</li>
+<li><em>show_small_description</em> :
+If set to true, a short product description will be displayed below product price in product details page.</li>
+<li><em>show_description</em> :
+Product description will be displayed in the descriptions tabs in product details page if set true.</li>
+<li><em>show_attributes</em> :
+Product filter attribute details as key value pairs will be shown in product descriptions tabs in product details page if set true.</li>
+<li><em>registration_mandatory</em> :
+If true, log in page will be visible before proceeding to checkout and customer will have to Sign in with valid credentials or login with Facebook or google, if set to false checkout as guest link will be visible in login page and customer can proceed to checkout as guest without logging in. </li>
+<li><em>show_login_startup</em> :
+After splash screen Login page will be displayed to customer if value is set to true when app is opened else home page will be displayed directly after splash screen.</li>
+<li><em>show_web_home</em> :
+Html home page will be displayed instead of native home screen if value is set to true else native home screen will be displayed.</li>
+<li><em>show_loader_icon</em> :
+In product listing page store logo icon will be displayed instead of progress bar until product image is loading.</li>
+</ol>
+
+<h3 id="dimension-values">Dimension values</h3>
+
+<ol>
+<li><em>list_item_height</em> :
+Layout height to display individual product in listing page is set using this value, it is adjusted depending on the product image dimensions. 250dp is the ideal value.</li>
+<li><em>image_height</em> :
+It is used to display product image in product details page and adjusted depending on the product image dimensions. 360dp is the ideal value.</li>
+<li><em>small_item_height</em> :
+It is used to set height of individual product layout which is used to display similar or recently or related product in product details page. 200dp ideal value.</li>
+<li><em>navigation_drawer_width</em> :
+Drawer width in home page is set using this value. Value ranges from 180dp to 320dp, set depending on text length displayed in drawer.</li>
+</ol>
+
+<h3 id="color-values">Color values</h3>
+
+<ol>
+<li><em>SplashColor</em> :
+Sets background color of splash screen.</li>
+<li>DrawerItemBack* :
+Sets background color of app drawer items in home page.</li>
+<li><em>PrimaryColor</em> :
+App header color is set using this value throughout the application.</li>
+<li><em>FadedPrimaryColor</em> :
+If tabs are present in home screen then the tab header text color which is not selected is set using this value. Generally this color is set either darker or lighter shade of primary color.</li>
+<li><em>PercentageColor</em> :
+This color is used to display percentage off on product price in product details page.</li>
+<li><em>SecondaryColor</em> :
+This color is used as background color of all button, number of cart items displayed in header and also favorite icon when a particular product is added to favorite list. Also this color is used as text color which acts as a clickable link.</li>
+<li><em>FadedSecondaryColor</em> :
+Generally this color is darker or lighter shade of secondary color, used as background of buttons in clicked mode.</li>
+<li><em>MenuTextColor</em> :
+Text which is displayed on app drawer is set using this color value.</li>
+<li><em>MenuBackground</em> :
+Background color behind store logo in app drawer is set using this color value.</li>
+<li><em>FooterColor</em> :
+Footer background color in home page is set using this color value.</li>
+<li><em>CopyrightText</em> :
+Copyright text shown in footer uses this color value.</li>
+</ol>
+
+<h3 id="string-values">String values</h3>
+
+<ol>
+<li><em>store_id</em> :
+It is the store id associated with each store.</li>
+<li><em>facebook_app_id</em> :
+Facebook id which we get when app is created on Facebook developers page with which we can use Log In with Facebook feature.  If kept blank then Facebook button will not be visible in Log In page.</li>
+<li><em>server_client_id</em> :
+Google id which we get when app is created in Google developers page with which we can use Log In with Google feature.  If kept blank then Google button will not be visible in Log In page.</li>
+<li><em>http</em> :
+Stores <strong>http://</strong> value.</li>
+<li><em>store_url</em> :
+The actual URL of the store which is visible to the end customer.  This is used in android manifest file for push notification feature.
+Example:  http://abc.com</li>
+<li><em>product_url</em> :
+Product URL of the store where all products are displayed.  This is used when customer shares a particular product to other customers.
+Example:  abc.com/products/</li>
+<li><em>production_base_url</em> :
+Stores URL of the store. This is used for API requests to fetch respective data.
+Example: http:// abc.my39shop.com/</li>
+<li><em>app_name</em> :
+Stores name of the app or store name.</li>
+<li><em>scheme</em> : 
+Scheme stores value which is unique to store, with the help of this we can retrieve respective stores product details page. Also used to show any special feature in common pages. Basically scheme value is set as store name or name used in URL </li>
+<li><em>sign_up_url</em> :
+Stores value which will be used during Sign up feature.
+Example: signup.abc.com</li>
+<li><em>forgot_password_url</em> :
+Stores value which will be used during forgot password feature.
+Example: forgotpassword.abc.com</li>
+<li><em>pincode_url</em> :
+Stores URL of the file where all pin code values are stored. If kept blank then the pin code checker functionality is disabled product details page.</li>
+<li><em>misc_url</em> :
+Stores URL of server where all product images for the particular store are kept.</li>
+<li><em>copyright_text</em> :
+Text which will be displayed in footer section on home page is kept here. Keep blank if not required to display copyright text in footer.</li>
+<li><em>client_id</em> :
+Stores value which is generated in oauth/applications. This is used to generate valid token when customer logs in the app.</li>
+<li><em>client_secret</em> :
+Stores value which is generated in oauth/applications. This is used to generate valid token when customer logs in the app.</li>
+<li><em>facebook_link</em> :
+Stores link to Facebook page of the store. Keep blank if not required which will also hide Facebook icon in footer on home page.</li>
+<li><em>twitter_link</em> :
+Stores link to twitter page of the store. Keep blank if not required which will also hide twitter icon in footer on home page.</li>
+<li><em>insta_link</em> :
+Stores link to Instagram page of the store. Keep blank if not required which will also hide Instagram icon in footer on home page.</li>
+<li><em>pinterest_link</em> :
+Stores link to Pinterest page of the store. Keep blank if not required which will also hide Pinterest icon in footer on home page.</li>
+<li><em>youtube_link</em> :
+Stores link to YouTube page of the store. Keep blank if not required which will also hide YouTube icon in footer on home page.</li>
+<li><em>googleplus_link</em> :
+Stores link to Google Plus page of the store. Keep blank if not required which will also hide Google Plus icon in footer on home page.</li>
+<li><em>support_phone</em> :
+Stores phone number which will be displayed in contact us page.</li>
+<li><em>support_email</em> :
+Stores email ID which will be displayed in contact us page.</li>
+<li><em>description_header</em> :
+Stores name which will be displayed as tab header for description data in product details page.</li>
+<li><em>attribute_header</em> :
+Stores name which will be displayed as tab header for attributes data in product details page.</li>
+<li><em>store_type</em> :
+There can be 3 values jewelry, marketplace or blank. If type is jewelry then extra details from jewelry app is fetched. For marketplace data from marketplace app is fetched or else keep blank.</li>
+<li><em>currency</em> :
+Currency symbol is stored here, which will be displayed in all price values across the app. </li>
+<li><em>mobile_prefix</em> :
+Country code which will be displayed before mobile number is kept here.</li>
+<li><em>size_image</em> :
+Name of size guide image will be kept here, same will be used to fetch image from server when customer clicks on Size guide button (name stored should be same as the name of the image kept on server). If kept blank there will be no option to display size guide details in size selector.</li>
+<li><em>pincode_true</em> :
+Display message if COD is available for product in product details page pin code checker. In this case customer entered pin code will have a matching pin code in pin code file with true value saved with it.</li>
+<li><em>pincode_false</em> :
+Display message if COD is not available for particular product in product details page pin code checker. In this case customer entered pin code will have a matching pin code in pin code file with false value saved with it.</li>
+<li><em>pincode_null</em> :
+Display message if Delivery not available for particular product in product details page. In this case customer entered pin code will have no matching pin code in pin code file. </li>
+</ol>
+
+<h3 id="string-array-values">String array values</h3>
+
+<p>Add multiple string values using <strong><item></strong> tag. </p>
+
+<ol>
+<li><em>tab_keys</em> :
+Add id which is present in product description data to be displayed in tabs in product details page.
+Example: If detailed description data fetched have div with id=care and respective content inside div then tab keys one of the id stored will be <em>item</em> <strong>care</strong> this will create new tab in product details page which will have care details.</li>
+<li><em>tab_display</em> :
+Add name to be displayed on tab header for product description data in product details page.
+<aside class="notice">tab_keys and tab­­<em>display values are related to each other. Each entry from tab_keys corresponds to a value in tab­­</em>display, hence they are key-value pairs placed in two separate arrays at same indices.</aside></li>
+<li><em>sort_criteria</em> :
+Add keys which are used in api based on which sorting will be performed in product listing page.
+Example:
+    priority,
+    price_ascending,
+    price_descending,</li>
+<li><em>sort_display</em> :
+Add names which will be displayed sort criteria spinner in product listing page.
+<aside class="notice"><em>sort_criteria</em> and <em>sort­_­display</em> values are related to each other. Each entry from <em>sort_criteria</em> corresponds to a value in <em>sort_display</em>, hence they are key-value pairs placed in two separate arrays at same indices.</aside>
+Example:
+    Popular,
+    Price Low-High,
+    Price High-Low,</li>
+<li><em>category_listing</em> :
+Add category id to this array, the sub categories of that category will be displayed in separate page before showing products.
+Example:  Consider category city which will have different city names. Upon clicking city name another page will be displayed where categories will be displayed for customer to select, like brands in the particular city.</li>
+<li><em>menu_items</em> :
+Pages like Terms and Condition, Shipping Details etc which needs to be shown in app, respective names should be added here which will be displayed in app drawer section below sign up.
+Example:
+    Terms and Condition</li>
+<li><em>menu_item_urls</em> :
+Add links that is the name of the html file which is kept in assets folder.
+Example:
+If terms and condition data is kept in terms.html file in asset folder then name to be added here is terms
+<aside class="notice">menu_items and menu­<em>item_urls values are related to each other.  Each entry from menu_items corresponds to a value in menu­</em>item_urls, hence they are key-value pairs placed in two separate arrays at same indices.</aside></li>
+</ol>
+
+          <h2 id="3-splash-amp-home-screen">3. Splash &amp; Home Screen</h2>
+
+<h3 id="files-classes">Files/Classes:</h3>
+
+<ol>
+<li>MainActivity</li>
+<li>HomeMainFragment</li>
+<li>HomeFragment</li>
+<li>FeaturedProductsFragment</li>
+<li>WebHomeFragment</li>
+</ol>
+
+<h3 id="description">Description</h3>
+
+<p>The splash screen is used to fetch all the data required for app to work normally. The data that is fetched in the background includes</p>
+
+<p><em>Categories:</em> The categories will appear in the navigation menu, each category can have products or further subcategories under it. These categories are fetched by making a GET request to the <strong>CATEGORY URL</strong>.</p>
 
 <blockquote>
-<p>To authorize, use this code:</p>
+<p>CATEGORY URL</p>
 </blockquote>
-<pre class="highlight ruby"><code><span class="nb">require</span> <span class="s1">'kittn'</span>
-
-<span class="n">api</span> <span class="o">=</span> <span class="no">Kittn</span><span class="o">::</span><span class="no">APIClient</span><span class="p">.</span><span class="nf">authorize!</span><span class="p">(</span><span class="s1">'meowmeowmeow'</span><span class="p">)</span>
-</code></pre><pre class="highlight python"><code><span class="kn">import</span> <span class="nn">kittn</span>
-
-<span class="n">api</span> <span class="o">=</span> <span class="n">kittn</span><span class="o">.</span><span class="n">authorize</span><span class="p">(</span><span class="s">'meowmeowmeow'</span><span class="p">)</span>
-</code></pre><pre class="highlight shell"><code><span class="c"># With shell, you can just pass the correct header with each request</span>
-curl <span class="s2">"api_endpoint_here"</span>
-  -H <span class="s2">"Authorization: meowmeowmeow"</span>
-</code></pre><pre class="highlight javascript"><code><span class="kr">const</span> <span class="nx">kittn</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'kittn'</span><span class="p">);</span>
-
-<span class="kd">let</span> <span class="nx">api</span> <span class="o">=</span> <span class="nx">kittn</span><span class="p">.</span><span class="nx">authorize</span><span class="p">(</span><span class="s1">'meowmeowmeow'</span><span class="p">);</span>
+<pre class="highlight plaintext"><code>https://abcd.my39shop.com/api/v1/store/categories
 </code></pre>
+<p><em>Banners:</em> All the banners that are to be displayed in the home screen are fetched by making a GET request with the following <strong>BANNER URL</strong> </p>
+
 <blockquote>
-<p>Make sure to replace <code class="prettyprint">meowmeowmeow</code> with your API key.</p>
+<p>BANNER URL</p>
 </blockquote>
-
-<p>Kittn uses API keys to allow access to the API. You can register a new Kittn API key at our <a href="http://example.com/developers">developer portal</a>.</p>
-
-<p>Kittn expects for the API key to be included in all API requests to the server in a header that looks like the following:</p>
-
-<p><code class="prettyprint">Authorization: meowmeowmeow</code></p>
-
-<aside class="notice">
-You must replace <code>meowmeowmeow</code> with your personal API key.
-</aside>
-
-<h1 id="kittens">Kittens</h1>
-
-<h2 id="get-all-kittens">Get All Kittens</h2>
-<pre class="highlight ruby"><code><span class="nb">require</span> <span class="s1">'kittn'</span>
-
-<span class="n">api</span> <span class="o">=</span> <span class="no">Kittn</span><span class="o">::</span><span class="no">APIClient</span><span class="p">.</span><span class="nf">authorize!</span><span class="p">(</span><span class="s1">'meowmeowmeow'</span><span class="p">)</span>
-<span class="n">api</span><span class="p">.</span><span class="nf">kittens</span><span class="p">.</span><span class="nf">get</span>
-</code></pre><pre class="highlight python"><code><span class="kn">import</span> <span class="nn">kittn</span>
-
-<span class="n">api</span> <span class="o">=</span> <span class="n">kittn</span><span class="o">.</span><span class="n">authorize</span><span class="p">(</span><span class="s">'meowmeowmeow'</span><span class="p">)</span>
-<span class="n">api</span><span class="o">.</span><span class="n">kittens</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
-</code></pre><pre class="highlight shell"><code>curl <span class="s2">"http://example.com/api/kittens"</span>
-  -H <span class="s2">"Authorization: meowmeowmeow"</span>
-</code></pre><pre class="highlight javascript"><code><span class="kr">const</span> <span class="nx">kittn</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'kittn'</span><span class="p">);</span>
-
-<span class="kd">let</span> <span class="nx">api</span> <span class="o">=</span> <span class="nx">kittn</span><span class="p">.</span><span class="nx">authorize</span><span class="p">(</span><span class="s1">'meowmeowmeow'</span><span class="p">);</span>
-<span class="kd">let</span> <span class="nx">kittens</span> <span class="o">=</span> <span class="nx">api</span><span class="p">.</span><span class="nx">kittens</span><span class="p">.</span><span class="nx">get</span><span class="p">();</span>
+<pre class="highlight plaintext"><code>https://abcd.my39shop.com/api/v1/store/home_page/banners
 </code></pre>
+<p><em>Featured Products:</em>  For fetching featured products make a GET request to <strong>FEATURED PRODUCTS URL</strong></p>
+
 <blockquote>
-<p>The above command returns JSON structured like this:</p>
+<p>FEATURED PRODUCTS URL</p>
 </blockquote>
-<pre class="highlight json"><code><span class="p">[</span><span class="w">
-  </span><span class="p">{</span><span class="w">
-    </span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
-    </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Fluffums"</span><span class="p">,</span><span class="w">
-    </span><span class="nt">"breed"</span><span class="p">:</span><span class="w"> </span><span class="s2">"calico"</span><span class="p">,</span><span class="w">
-    </span><span class="nt">"fluffiness"</span><span class="p">:</span><span class="w"> </span><span class="mi">6</span><span class="p">,</span><span class="w">
-    </span><span class="nt">"cuteness"</span><span class="p">:</span><span class="w"> </span><span class="mi">7</span><span class="w">
-  </span><span class="p">},</span><span class="w">
-  </span><span class="p">{</span><span class="w">
-    </span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w">
-    </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Max"</span><span class="p">,</span><span class="w">
-    </span><span class="nt">"breed"</span><span class="p">:</span><span class="w"> </span><span class="s2">"unknown"</span><span class="p">,</span><span class="w">
-    </span><span class="nt">"fluffiness"</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w">
-    </span><span class="nt">"cuteness"</span><span class="p">:</span><span class="w"> </span><span class="mi">10</span><span class="w">
-  </span><span class="p">}</span><span class="w">
-</span><span class="p">]</span><span class="w">
-</span></code></pre>
-<p>This endpoint retrieves all kittens.</p>
-
-<h3 id="http-request">HTTP Request</h3>
-
-<p><code class="prettyprint">GET http://example.com/api/kittens</code></p>
-
-<h3 id="query-parameters">Query Parameters</h3>
-
-<table><thead>
-<tr>
-<th>Parameter</th>
-<th>Default</th>
-<th>Description</th>
-</tr>
-</thead><tbody>
-<tr>
-<td>include_cats</td>
-<td>false</td>
-<td>If set to true, the result will also include cats.</td>
-</tr>
-<tr>
-<td>available</td>
-<td>true</td>
-<td>If set to false, the result will include kittens that have already been adopted.</td>
-</tr>
-</tbody></table>
-
-<aside class="success">
-Remember — a happy kitten is an authenticated kitten!
-</aside>
-
-<h2 id="get-a-specific-kitten">Get a Specific Kitten</h2>
-<pre class="highlight ruby"><code><span class="nb">require</span> <span class="s1">'kittn'</span>
-
-<span class="n">api</span> <span class="o">=</span> <span class="no">Kittn</span><span class="o">::</span><span class="no">APIClient</span><span class="p">.</span><span class="nf">authorize!</span><span class="p">(</span><span class="s1">'meowmeowmeow'</span><span class="p">)</span>
-<span class="n">api</span><span class="p">.</span><span class="nf">kittens</span><span class="p">.</span><span class="nf">get</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
-</code></pre><pre class="highlight python"><code><span class="kn">import</span> <span class="nn">kittn</span>
-
-<span class="n">api</span> <span class="o">=</span> <span class="n">kittn</span><span class="o">.</span><span class="n">authorize</span><span class="p">(</span><span class="s">'meowmeowmeow'</span><span class="p">)</span>
-<span class="n">api</span><span class="o">.</span><span class="n">kittens</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
-</code></pre><pre class="highlight shell"><code>curl <span class="s2">"http://example.com/api/kittens/2"</span>
-  -H <span class="s2">"Authorization: meowmeowmeow"</span>
-</code></pre><pre class="highlight javascript"><code><span class="kr">const</span> <span class="nx">kittn</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'kittn'</span><span class="p">);</span>
-
-<span class="kd">let</span> <span class="nx">api</span> <span class="o">=</span> <span class="nx">kittn</span><span class="p">.</span><span class="nx">authorize</span><span class="p">(</span><span class="s1">'meowmeowmeow'</span><span class="p">);</span>
-<span class="kd">let</span> <span class="nx">max</span> <span class="o">=</span> <span class="nx">api</span><span class="p">.</span><span class="nx">kittens</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+<pre class="highlight plaintext"><code>https://abcd.my39shop.com/api/v1/store/products/featured
 </code></pre>
+<p><em>Supported pin codes:</em> There is no fixed format for the pin code file URL, it varies from store to store</p>
+
+<p><em>Discount Coupons:</em> For fetching all the active discount coupons, make a GET request to <strong>DISCOUNT COUPONS URL</strong></p>
+
 <blockquote>
-<p>The above command returns JSON structured like this:</p>
+<p>DISCOUNT COUPOUNS URL</p>
 </blockquote>
-<pre class="highlight json"><code><span class="p">{</span><span class="w">
-  </span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w">
-  </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Max"</span><span class="p">,</span><span class="w">
-  </span><span class="nt">"breed"</span><span class="p">:</span><span class="w"> </span><span class="s2">"unknown"</span><span class="p">,</span><span class="w">
-  </span><span class="nt">"fluffiness"</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w">
-  </span><span class="nt">"cuteness"</span><span class="p">:</span><span class="w"> </span><span class="mi">10</span><span class="w">
-</span><span class="p">}</span><span class="w">
-</span></code></pre>
-<p>This endpoint retrieves a specific kitten.</p>
+<pre class="highlight plaintext"><code>https://abcd.my39shop.com/api/v1/store/discount_coupons
+</code></pre>
+<p><em>Countries:</em> All the countries that are listed when customer adds an address for billing/delivery. Make a GET request with <strong>COUNTRIES URL</strong></p>
 
-<aside class="warning">Inside HTML code blocks like this one, you can&rsquo;t use Markdown, so use <code>&lt;code&gt;</code> blocks to denote code.</aside>
+<blockquote>
+<p>COUNTRIES URL</p>
+</blockquote>
+<pre class="highlight plaintext"><code>https://abcd.my39shop.com /api/v1/countries
+</code></pre>
+<p><em>Filter Attributes:</em> The different criteria used for filtering products are fetched by making a GET request to <strong>FILTER ATTRIBUTES URL</strong></p>
 
-<h3 id="http-request">HTTP Request</h3>
+<blockquote>
+<p>FILTER ATTRIBUTES URL</p>
+</blockquote>
+<pre class="highlight plaintext"><code>https://abcd.my39shop.com/api/v1/store/filter_attributes
+</code></pre>
+<p><strong>The home screen is of two types:</strong></p>
 
-<p><code class="prettyprint">GET http://example.com/kittens/&lt;ID&gt;</code></p>
+<p><strong>Native Home</strong>, where all the data like banners and featured products are displayed natively. The HomeMainFragment is used to create tab implementation where we have two tabs namely, Home and Featured Collection. </p>
 
-<h3 id="url-parameters">URL Parameters</h3>
+<p>The Home tab displays all the banners related to the store. A banner can be of two types, list banner which is displayed in an automated slideshow and other banners which are displayed one below the other. A banner can have a category id associated with it, on click of such a banner the app takes the customer to the product listing page for that category.
+The page footer contains links to different social media page links for the store. This is done in the HomeFragment class.</p>
 
-<table><thead>
-<tr>
-<th>Parameter</th>
-<th>Description</th>
-</tr>
-</thead><tbody>
-<tr>
-<td>ID</td>
-<td>The ID of the kitten to retrieve</td>
-</tr>
-</tbody></table>
+<p>The Featured Collection tab displays a grid view collection of all the featured products. On clicking any of the products the app takes the customer to the product detail screen for the selected product. This is done in the FeaturedProductsFragment class.</p>
 
-          <h1 id="errors">Errors</h1>
+<p>If a store does not have any featured products the HomeMainFragment class is bypassed and only the HomeFragment class is used in its place, thus eliminating the tab implementation and hence the featured collection tab.</p>
 
-<aside class="notice">This error section is stored in a separate file in `includes/_errors.md`. Slate allows you to optionally separate out your docs into many files&hellip;just save them to the `includes` folder and add them to the top of your `index.md`&rsquo;s frontmatter. Files are included in the order listed.</aside>
+<p><strong>Web home</strong> implementation uses a web view to display a web page designed specifically for a mobile app, this is achieved in the WebHomeFragment. The URL used for displaying the web home is <strong>WEB HOME URL</strong></p>
 
-<p>The Kittn API uses the following error codes:</p>
+<blockquote>
+<p>WEB HOME URL</p>
+</blockquote>
+<pre class="highlight plaintext"><code>https://abcd.my39shop.com/pages/mobile_home
+</code></pre>
+<p>This web home page can have banners related to categories and/or products as well as featured product collection. These items have their hyperlinks set up in such a way that a category banner will have <em>category/category_id</em> at the end of the hyperlink, a product will have <em>product/product_id</em> at the end of it. The click events on these items are captured by listening to the reload event of the web view and depending on the content of the link the app takes the customer either to the product listing page of the selected category or the product detail page of the selected product.</p>
 
-<table><thead>
-<tr>
-<th>Error Code</th>
-<th>Meaning</th>
-</tr>
-</thead><tbody>
-<tr>
-<td>400</td>
-<td>Bad Request &ndash; Your request sucks</td>
-</tr>
-<tr>
-<td>401</td>
-<td>Unauthorized &ndash; Your API key is wrong</td>
-</tr>
-<tr>
-<td>403</td>
-<td>Forbidden &ndash; The kitten requested is hidden for administrators only</td>
-</tr>
-<tr>
-<td>404</td>
-<td>Not Found &ndash; The specified kitten could not be found</td>
-</tr>
-<tr>
-<td>405</td>
-<td>Method Not Allowed &ndash; You tried to access a kitten with an invalid method</td>
-</tr>
-<tr>
-<td>406</td>
-<td>Not Acceptable &ndash; You requested a format that isn&rsquo;t json</td>
-</tr>
-<tr>
-<td>410</td>
-<td>Gone &ndash; The kitten requested has been removed from our servers</td>
-</tr>
-<tr>
-<td>418</td>
-<td>I&rsquo;m a teapot</td>
-</tr>
-<tr>
-<td>429</td>
-<td>Too Many Requests &ndash; You&rsquo;re requesting too many kittens! Slow down!</td>
-</tr>
-<tr>
-<td>500</td>
-<td>Internal Server Error &ndash; We had a problem with our server. Try again later.</td>
-</tr>
-<tr>
-<td>503</td>
-<td>Service Unavailable &ndash; We&rsquo;re temporarially offline for maintanance. Please try again later.</td>
-</tr>
-</tbody></table>
+          <h2 id="4-navigation-menu">4. Navigation Menu</h2>
 
+<h3 id="files-classes">Files/Classes</h3>
+
+<ol>
+<li>NavigationDrawerFragment</li>
+<li>StoreDrawerFragment</li>
+<li>DrawerFragment</li>
+</ol>
+
+<h3 id="description">Description</h3>
+
+<p>The Navigation Menu has two sections,</p>
+
+<ol>
+<li><p>The top section displays all the top level categories for the store. If any category has sub-categories the menu will take the customer to the next level when customer clicks on the top level category and so on. The top level is implemented using the DrawerFragment class. The sub levels are implemented using StoreDrawerFragment class. The levels are switched using a viewflipper.</p></li>
+<li><p>The bottom section displays static items like Contact Us, Login, and Sign Up when the customer is not logged in. When the customer is logged in Login and Sign Up are replaced by My Account and Log Out. We can add a few other items to this section provided their content is a web page (external as well as internal).</p></li>
+</ol>
+
+          <h2 id="5-product-listing">5. Product Listing</h2>
+
+<h3 id="files-classes">Files/Classes</h3>
+
+<ol>
+<li>ProductListingActivity</li>
+<li>SearchActivity</li>
+</ol>
+
+<h3 id="description">Description</h3>
+
+<p>The product listing page has a grid view collection displaying the products of the currently selected category. The products are sorted according to a default sort criteria. Customer can change the way products are displayed either in grid format or list format if display_option is set to true in config file. Customer can sort products using various sorting options available in sort spinner. Customer can also filter out products by applying various filter options available in filter screen. Once filters are applied a button will be displayed to customer to reset all filters. Upon clicking on product customer is taken to product details page. If <em>show_out_of_stock</em> flag is marked true in config then out of stock will be displayed on product image for products with no stock. If <em>show_favourite_listng</em> is marked true in config then customer will have favorite icon on product image to directly add product to favorite list.
+Data is fetched by making a GET request <strong>PRODUCT LISTING URL</strong></p>
+
+<blockquote>
+<p>PRODUCT LISTING URL</p>
+</blockquote>
+<pre class="highlight plaintext"><code>https://abcd.my39shop.com/api/v1/store/products?active_catgory={category_id}&amp;sort_criteria={sort_criteria_value}&amp;facets={false}&amp;per_page={per_page_value}&amp;page={page_value}
+</code></pre>
+<p>If out of stock is to be displayed then additional parameter variants with a value 1 will be added to the <strong>PRODUCT LISTING URL</strong>.</p>
+
+<p>Immediately after the above request make another request by just changing the value for facets parameter to true. The result of this request will be used for setting up the filters as explained later.</p>
+
+<h3 id="search">Search</h3>
+
+<p>Customer can search for a product by clicking search icon, SearchActivity will be opened where customer can type the search criteria and products will be displayed which matches the criteria. Previously searched criteria will be saved in recent searches list and customer can search products again by selecting it. Latest search will be shown on top. Maximum of 10 searches will be saved in recent search list and as the new searches are added old ones are removed from the list. To get data for a search query make a get request to <strong>SEARCH URL</strong></p>
+
+<blockquote>
+<p>SEARCH URL</p>
+</blockquote>
+<pre class="highlight plaintext"><code>https://abcd.my39shop.com/api/v1/store/products?search_criteria={search_query}&amp;sort_criteria={sort_criteria_value}&amp;facets={false}&amp;per_page={per_page_value}&amp;page={page_value}
+</code></pre>
+          <h2 id="6-filters">6. Filters</h2>
+
+<h3 id="files-classes">Files/Classes</h3>
+
+<ol>
+<li>FilterActivity</li>
+</ol>
+
+<h3 id="description">Description</h3>
+
+<p>The filter attributes fetched at app start up are used in the filters screen, which returns all the attributes with attribute indices as key-value pairs. When product listing is opened the products will either belong to a category or a result of a search query. So when customer opens the filter screen we need to only show those attributes that are relevant to the current collection of products.</p>
+
+<p>For doing this, as explained above, we need to make a call to the same API (first call) that was called for either category listing or a search query with just a single change in the parameters. The parameters <em>facets</em> is by default false in the first call and then we have sent it as true in the second call without changing any other parameter. This returns a list of attribute indices that are relevant to the current list of products, using which we can hide the non –relevant attributes.</p>
+
+<p>Once the customer selects the filters make a GET request using the same API with an extra parameter called <em>filter_attributes</em> and its value should be a comma separated string of all the selected filter attribute indices.</p>
+
+          <h2 id="7-category-listing">7. Category Listing</h2>
+
+<h3 id="files-classes">Files/Classes</h3>
+
+<ol>
+<li>CategoryListingActivity</li>
+</ol>
+
+<h3 id="description">Description</h3>
+
+<p>The category listing page displays a grid view collection of all the sub categories of a selected category. This screen is used in only select stores. This feature is enabled in store’s config file by adding the category id, for which the sub categories are to be displayed in a grid view, to the <em>category_listing</em> array.</p>
+
+          <h2 id="8-product-detail">8. Product Detail</h2>
+
+<h3 id="files-classes">Files /Classes</h3>
+
+<ol>
+<li>BaseDetailActivity</li>
+<li>ProductDetailActivity</li>
+</ol>
+
+<h3 id="description">Description</h3>
+
+<p>The product detail screen displays product&rsquo;s information like product images, name, price, different descriptions, and variants along with lists of similar/related/recently viewed products. It also provides <em>Add to cart</em> or <em>Buy Now</em> operation to the customer.
+To get all the product data make a GET request to <strong>PRODUCT DETAILS URL</strong></p>
+
+<blockquote>
+<p>PRODUCT DETAILS URL</p>
+</blockquote>
+<pre class="highlight plaintext"><code>https://abcd.my39shop.com/api/v1/store/products/{product_id}
+</code></pre>
+<p>This API returns all the details of the product including a list of related products which is then used directly to display the related products list.</p>
+
+<p>To display similar products we need to fetch the similar products using a separate API call with a GET request to <strong>SIMILAR PRODUCTS URL</strong></p>
+
+<blockquote>
+<p>SIMILAR PRODUCTS URL</p>
+</blockquote>
+<pre class="highlight plaintext"><code>https://abcd.my39shop.com/api/v1/store/products/{product_id}/similar_products
+</code></pre>
+<p>To display recently viewed products we use the normal product listing API with which we can get the products by passing a comma separated string of all the recent product ids. This ids string, containing ids of 5 products at the most, is stored using shared preference.
+Fetch the recent products by making a GET request to <strong>RECENT PRODUCTS URL</strong></p>
+
+<blockquote>
+<p>RECENT PRODUCTS URL</p>
+</blockquote>
+<pre class="highlight plaintext"><code>https://abcd.my39shop.com/api/v1/store/products?page=1&amp;per_page=5&amp;facets=false&amp;ids={ids_string}
+</code></pre>
+<p>The product detail screen has an <em>add to favorite</em> option which requires the customer to login as the API needs customer&rsquo;s access token. If customer is not logged in, on selecting this option customer is taken to the login screen.</p>
+
+<p>To add product as favorite make a POST request to <strong>ADD TO FAVORITE URL</strong></p>
+
+<blockquote>
+<p>ADD TO FAVOURITE URL</p>
+</blockquote>
+<pre class="highlight plaintext"><code>https://abcd.my39shop.com/api/v1/store/cart/{cart_token}/add_items?items[][id]={id_value}&amp;items[][quantity]={quantity_value}
+</code></pre>
+<p>For Jewelry store app, additional product data from jewelry server is fetched using a GET request <strong>JEWELRY DATA URL</strong></p>
+
+<blockquote>
+<p>JEWELRY DATA URL</p>
+</blockquote>
+<pre class="highlight plaintext"><code>https://jewelcommerce.my39shop.com/api/v1/store/products/{product_id}?store_id={store_id_value}
+</code></pre>
+<p>Another API call is required to fetch product price data with a GET request to <strong>PRODUCT PRICE DATA</strong></p>
+
+<blockquote>
+<p>PRODUCT PRICE DATA</p>
+</blockquote>
+<pre class="highlight plaintext"><code>https://jewelcommerce.my39shop.com/api/v1/store/products/{product_id}/price?store_id={store_id_value}
+</code></pre>
+<p>To create a cart or to add an item to cart make a POST request to <strong>ADD TO CART URL</strong></p>
+
+<blockquote>
+<p>ADD TO CART</p>
+</blockquote>
+<pre class="highlight plaintext"><code>https://jewelcommerce.my39shop.com/api/v1/store/cart/items?store_id={store_id_value}&amp;product_id={id_value}&amp;quantity={quantity_value}&amp;metal_option_id={metal_option_value}&amp;metal_size_id={metal_size_value}&amp;gem_options[{option_id_value}]={option_value}
+</code></pre>
+<p>If cart exists, add an extra parameter <em>cart_token</em> to the above URL, absence of it means the method will create a new cart. </p>
+
+<p>For a market place app, additional data regarding all the vendors for the selected product is fetched using a GET request to <strong>MARKET PLACE URL</strong></p>
+
+<blockquote>
+<p>MARKET PLACE URL</p>
+</blockquote>
+<pre class="highlight plaintext"><code>https://marketplace.my39shop.com/api/v1/store/products/{product_id}?store_id={store_id_value}
+</code></pre>
+<p>To create a cart or add item to cart for market place app use a POST request with following URL <strong>ADD TO CART WITH MARKET PLACE</strong></p>
+
+<blockquote>
+<p>ADD TO CART WITH MARKET PLACE</p>
+</blockquote>
+<pre class="highlight plaintext"><code>https://marketplace.my39shop.com/api/v1/store/cart/items?store_id={store_id_value}&amp;product_id={id_value}&amp;quantity={quantity_value}&amp;metal_option_id={metal_option_value}&amp;metal_size_id={metal_size_value}&amp;gem_options[{option_id_value}]={option_value}
+</code></pre>
+<p>If cart exists, add an extra parameter <em>cart_token</em> to the above URL, absence of it means the method will create a new cart.</p>
+
+<p>The product detail screen differs for different stores, the way in which data is represented and displayed differs from store to store. We have multiple classes for product detail implementations and the respective detail screen is opened using a switch case statement over a unique scheme value from config file. For example if the scheme is <em>ABCD</em> it will open the product detail screen designed for ABCD store, if there is one, else it will open ProductDetailActivity by defaullt.</p>
+
+<p>All the basic functionalities like get product data, share functionality, add to favorite and get similar, recently viewed prodcuts are implemented in BaseDetailActivity class.This class is a super class to all product detail activity classes hence all the common functionalities are indirectly present in all sub classes by virtue of inheritance. </p>
+
+          <h2 id="9-image-list">9. Image List</h2>
+
+<h3 id="files-classes">Files/Classes</h3>
+
+<ol>
+<li>ImageListActivity</li>
+</ol>
+
+<h3 id="description">Description</h3>
+
+<p>A product can have multiple images, which are displayed in the product detail screen. But an option to zoom each image is provided in a separate screen implemented using ImageListingActivity class. It uses product image URLs received in the product detail API called in product detail screen and sets up a view pager with all the images.</p>
+
+          <h2 id="10-cart-amp-checkout">10. Cart &amp; Checkout</h2>
+
+<h3 id="files-classes">Files/Classes</h3>
+
+<ol>
+<li>CartCheckoutActivity</li>
+<li>CartFragment</li>
+<li>NewCheckoutFragment</li>
+</ol>
+
+<h3 id="description">Description</h3>
+
+<p>The cart screen displays the content of customer&rsquo;s cart, including cart items with their details, total amount, discount coupons, gift cards, and reward points applied, if any. This is implemented in CartFragment class.
+There are multiple API requests in this screen, these include: </p>
+
+<ul>
+<li><em>Get cart details</em>: Each cart has a token using which we can get the updated cart by making a GET request to <strong>GET CART URL</strong>.</li>
+</ul>
+
+<blockquote>
+<p>GET CART URL:</p>
+</blockquote>
+<pre class="highlight plaintext"><code>https://abcd.my39shop.com/api/v1/store/cart/{cart_token}/get
+</code></pre>
+<ul>
+<li><em>Update cart item quantity</em>: Cart item quantity can be increased or decreased with a PATCH request to <strong>UPDATE QUANTITY URL</strong>.</li>
+</ul>
+
+<blockquote>
+<p>UPDATE QUANTITY URL</p>
+</blockquote>
+<pre class="highlight plaintext"><code>https://abcd.my39shop.com/api/v1/store/cart/{cart_token}/update_quantity?id={id_value}&amp;quantity={quantity_value}
+</code></pre>
+<ul>
+<li><em>Remove cart item</em>: Cart item can be removed with a DELETE request to <strong>REMOVE ITEM URL</strong>.</li>
+</ul>
+
+<blockquote>
+<p>REMOVE ITEM URL:</p>
+</blockquote>
+<pre class="highlight plaintext"><code>https://abcd.my39shop.com/api/v1/store/cart/{cart_token}/delete?items[][id]={id_value}
+</code></pre>
+<ul>
+<li><em>Apply discount coupon</em>:  To apply a discount coupon or a gift card make a PATCH request to <strong>APPLY COUPON URL</strong>.</li>
+</ul>
+
+<blockquote>
+<p>APPLY COUPON URL:</p>
+</blockquote>
+<pre class="highlight plaintext"><code>https://abcd.my39shop.com/api/v1/store/cart/{cart_token}/apply_discount_coupon?discount_coupon_code={coupon_value}
+</code></pre>
+<ul>
+<li><em>Remove discount coupon</em>: To remove a discount coupon make a PATCH request to <strong>REMOVE COUPON URL</strong>.</li>
+</ul>
+
+<blockquote>
+<p>REMOVE COUPON URL:</p>
+</blockquote>
+<pre class="highlight plaintext"><code>https://abcd.my39shop.com/api/v1/store/cart/{cart_token}/remove_discount_coupon
+</code></pre>
+<ul>
+<li><em>Remove gift card</em>: To remove a gift card make a PATCH request to <strong>REMOVE GIFT CARD URL</strong>.</li>
+</ul>
+
+<blockquote>
+<p>REMOVE GIFT CARD URL:</p>
+</blockquote>
+<pre class="highlight plaintext"><code>https://abcd.my39shop.com/api/v1/store/cart/{cart_token}/remove_gift_card
+</code></pre>
+<ul>
+<li><em>Apply reward points</em>: Reward points can be applied with a PATCH request to <strong>APPLY REWARD POINTS URL</strong>.</li>
+</ul>
+
+<blockquote>
+<p>APPLY REWARD POINTS URL:</p>
+</blockquote>
+<pre class="highlight plaintext"><code>https://abcd.my39shop.com/api/v1/store/cart/{cart_token}/apply_reward_points?reward_points={reward_points_value}
+</code></pre>
+<ul>
+<li><em>Remove reward points</em>: Reward points can be removed with a PATCH request to <strong>REMOVE GIFT CARD URL</strong>.</li>
+</ul>
+
+<blockquote>
+<p>REMOVE GIFT CARD URL:</p>
+</blockquote>
+<pre class="highlight plaintext"><code>https://abcd.my39shop.com/api/v1/store/cart/{cart_token}/remove_reward_points
+</code></pre>
+<p>All the above calls, except get cart, can have an additional parameter in access_token if the customer is logged in.</p>
+
+<p>The checkout is implemented in a webview using the checkout process of the web store.
+When the customer proceeds to checkout, if not logged in, he/she is asked to log in with an option to checkout as guest.</p>
+
+<p>To start checkout, following <strong>CHECKOUT URL</strong> is opened in the webview.</p>
+
+<blockquote>
+<p>CHECKOUT URL:</p>
+</blockquote>
+<pre class="highlight plaintext"><code>https://abcd.my39shop.com/checkouts/init?cart_id={cart_token_value}&amp;is_mobile={true}
+</code></pre>
+<p>If the customer is logged in, append access_token parameter to the above URL. </p>
+
+<p>The customer then follows the checkout steps as the app takes him/her forward through the webview. We listen to the reload event of the web view and depending on the content of the URL that is loaded the app takes certain actions. If the URL contains the word “confirm” it means that customer has successfully placed the order so we clear the cart and on the next reload take the customer to the home screen.</p>
+
+          <h2 id="11-contact-us">11. Contact Us</h2>
+
+<h3 id="files-classes">Files/Classes</h3>
+
+<ol>
+<li>ContactUsActivity</li>
+</ol>
+
+<h3 id="description">Description</h3>
+
+<p>The contact us screen has three sections,</p>
+
+<ul>
+<li><p>Support phone number for the store is mentioned in the first section, with an option to make a call from the app by tapping the phone icon.</p></li>
+<li><p>Second section displays Store’s support email address, a tap on the mail icon opens the default mail composer.</p></li>
+<li><p>The third section is a form which accepts different inputs from the customer like Name, Email, Phone and Comments. This info can then be submitted with a POST request to <strong>SUBMIT FEEDBACK URL</strong>.</p></li>
+</ul>
+
+<blockquote>
+<p>SUBMIT FEEDBACK URL:</p>
+</blockquote>
+<pre class="highlight plaintext"><code>https://abcd.my39shop.com/api/v1/store/contact_us?email={email_value}&amp;subject=Feedback&amp;fields[name]={name_value}&amp;fields[phone]={phone_value}&amp;fields[note]={comments_value}
+</code></pre>
+          <h2 id="12-login">12. Login</h2>
+
+<h3 id="files-classes">Files/Classes</h3>
+
+<ol>
+<li>LoginActivity</li>
+</ol>
+
+<h3 id="description">Description</h3>
+
+<p>There are 3 ways for a customer to log in,</p>
+
+<ul>
+<li>Native login: The customer can log in with the username and password he has registered with the store by signing up. The login API needs customer’s username and password along with two keys that are required for authentication. These keys are called Client Id and Client Secret, they are unique for each store. The login API needs a POST request to <strong>LOGIN URL</strong>.</li>
+</ul>
+
+<blockquote>
+<p>LOGIN URL:</p>
+</blockquote>
+<pre class="highlight plaintext"><code>https://abcd.my39shop.com/api/v1/store/customer/accounts/sign_in?login={email_value}&amp;password={password_value}&amp;client_id={id_value}&amp;secret={secret_value}
+</code></pre>
+<ul>
+<li>Login with Google: The app is registered with the Google developer console using it’s package name to enable Google Sign In, a Google client id is generated in this process which is used to obtain a token that is further used in the sign in with Google API which uses the <strong>SIGN IN WITH GOOGLE URL</strong>.</li>
+</ul>
+
+<blockquote>
+<p>SIGN IN WITH GOOGLE URL:</p>
+</blockquote>
+<pre class="highlight plaintext"><code>https://abcd.my39shop.com/api/v1/store/customer/accounts/sign_in_with_google?access_token={token_value}&amp;client_id={id_value}&amp;secret={secret_value}
+</code></pre>
+<ul>
+<li>Login with Facebook: The app is registered with the Facebook developer console using it’s package name to enable Facebook Sign In, a Facebook App Id is generated in this process which is used to obtain a token that is further used in the sign in with Facebook API which uses the <strong>SIGN IN WITH FACEBOOK URL</strong>.</li>
+</ul>
+
+<blockquote>
+<p>SIGN IN WITH FACEBOOK URL:</p>
+</blockquote>
+<pre class="highlight plaintext"><code>https://abcd.my39shop.com/api/v1/store/customer/accounts/sign_in_with_facebook?access_token={token_value}&amp;client_id={id_value}&amp;secret={secret_value}
+</code></pre>
+<p>Upon login with any of the above methods an access token is generated which is used to authenticate and identify the customer. The app maintains a local copy of the customer’s cart which needs to be synchronized with server copy which is done right after login using the access token.</p>
+
+<p>If there is no local cart, using access token customer’s cart is fetched and stored locally. This is done using a GET request to <strong>GET CART URL</strong>.</p>
+
+<blockquote>
+<p>GET CART URL:</p>
+</blockquote>
+<pre class="highlight plaintext"><code>https://abcd.my39shop.com/api/v1/store/cart?access_token={token_value}
+</code></pre>
+<p>If there is a local copy of the cart, it is associated with the customer, to make sure both the carts are in sync, with a GET request to <strong>ASSOCIATE CART URL</strong>.</p>
+
+<blockquote>
+<p>ASSOCIATE CART URL:</p>
+</blockquote>
+<pre class="highlight plaintext"><code>https://abcd.my39shop.com/api/v1/store/cart/{cart_token}/associate_cart_to_customer?access_token={token_value}
+</code></pre>
+          <h2 id="13-sign-up">13. Sign Up</h2>
+
+<h3 id="files-classes">Files/Classes</h3>
+
+<ol>
+<li>SignUpActivity</li>
+</ol>
+
+<h3 id="description">Description</h3>
+
+<p>Customer sign up needs details like First name, Last name, Username(Email), Phone, Password(twice for confirmation) and Yes or No for marketing mail subscription. Other than Phone all the fields are mandatory. All this data is used to register the customer by making a POST request to the <strong>SIGN UP URL</strong>.</p>
+
+<blockquote>
+<p>SIGN UP URL:</p>
+</blockquote>
+<pre class="highlight plaintext"><code>https://abcd.my39shop.com/api/v1/store/customer/accounts/sign_up?first_name={firstname_value}&amp;last_name={lastname_value}&amp;login={email_value}&amp;phone={phone_value}&amp;password={password_value}&amp;password_confirmation={password_value}&amp;marketing_mails={0 or 1}
+</code></pre>
+<p>This will send an activation link to the registered email address and on clicking it on the device where the app is installed the app is launched as a listener set up to receive the click event. The listener also captures a link containing the registered email id and the activation token required to activate customer’s account.
+The account is then activated using a PUT request to <strong>ACTIVATION URL</strong>.</p>
+
+<blockquote>
+<p>ACTIVATION URL:</p>
+</blockquote>
+<pre class="highlight plaintext"><code>"https://abcd.my39shop.com/api/v1/store/customer/accounts/activate?activation_token={token_value}&amp;login={email_value}
+</code></pre>
+<p>This is done in the LoginActivity class so that customer can then straight away login with the activated account. </p>
+
+          <h2 id="14-forgot-password">14. Forgot Password</h2>
+
+<h3 id="files-classes">Files/Classes</h3>
+
+<ol>
+<li>ForgotPasswordActivity</li>
+</ol>
+
+<h3 id="description">Description</h3>
+
+<p>The forgot password screen lets the customer request a change of password by first giving an option to reset the password using his/her registered email address which sends a password reset link and then letting the customer set a new password using the password by launching the app when customer clicks on the link with help of a listener. The listener also captures a link containing a recovery token for setting a new password.
+To send a reset link make a GET request to <strong>RESET PASSWORD URL</strong>.</p>
+
+<blockquote>
+<p>RESET PASSWORD URL:</p>
+</blockquote>
+<pre class="highlight plaintext"><code>https://abcd.my39shop.com/api/v1/store/customer/accounts/forgot_password?login={email_value}
+</code></pre>
+<p>To set a new password, make a PUT request to <strong>NEW PASSWORD URL</strong>.</p>
+
+<blockquote>
+<p>NEW PASSWORD URL:</p>
+</blockquote>
+<pre class="highlight plaintext"><code>https://abcd.my39shop.com/api/v1/store/customer/accounts/set_password?recovery_token={token_value}&amp;password={password_value}&amp;password_confirmation={password_value}
+</code></pre>
+          <h2 id="15-my-account">15. My Account</h2>
+
+<h3 id="files-classes">Files/Classes</h3>
+
+<ol>
+<li>MyAccountActivity</li>
+</ol>
+
+<h3 id="description">Description</h3>
+
+<p>My Account is used to display links to customer’s orders, his/her saved addresses order delivery, changing password, customer profile info and all the products which are marked as favorites by customer. My Account screen will be displayed once customer is logged in successfully in the app, also a link will be added in app drawer for customer to open account details. Also logout link is provided so that customer can be logout successfully from the app.</p>
+
+          <h2 id="16-my-orders">16. My Orders</h2>
+
+<h3 id="files-classes">Files/Classes</h3>
+
+<ol>
+<li>MyOrdersActivity</li>
+<li>OrderDetailsActivity</li>
+</ol>
+
+<h3 id="description">Description</h3>
+
+<p>Customer orders will be fetched and displayed using in a list view. Once customer will click on a particular order he/she will be taken to order details screen. This is implemented in MyOrdersActivity class.
+Orders are fetched using the GET request to <strong>GET ORDERS URL</strong>.</p>
+
+<blockquote>
+<p>GET ORDERS URL:</p>
+</blockquote>
+<pre class="highlight plaintext"><code>https://abcd.my39shop.com/api/v1/store/customer/orders?access_token={token_value}
+</code></pre>
+<p>Order Details are fetched using a GET request to <strong>GET ORDER DETAIL URL</strong>.</p>
+
+<blockquote>
+<p>GET ORDER DETAIL URL:</p>
+</blockquote>
+<pre class="highlight plaintext"><code>https://abcd.my39shop.com/api/v1/store/customer/orders/{order_id}?access_token={token_value}
+</code></pre>
+          <h2 id="17-addresses">17. Addresses</h2>
+
+<h3 id="files-classes">Files/Classes</h3>
+
+<ol>
+<li>AddressesActivity</li>
+<li>UpdateAddressActivity</li>
+</ol>
+
+<h3 id="description">Description</h3>
+
+<p>Customer’s saved addresses are displayed here. There is an option to add a new address, update or delete an existing address. This is implemented in the AddressesActivity class. A maximum of 5 addresses can be added. 
+To add and update an address UpdateAddressActivity class is used.
+All addresses are fetched using a GET request to <strong>GET ADDRESSES URL</strong>.</p>
+
+<blockquote>
+<p>GET ADDRESSES URL:</p>
+</blockquote>
+<pre class="highlight plaintext"><code>https://abcd.my39shop.com/api/v1/store/customer/addresses?access_token={token_value}
+</code></pre>
+<p>An address is deleted using DELETE request <strong>DELETE ADDRESS URL</strong>.</p>
+
+<blockquote>
+<p>DELETE ADDRESS URL:</p>
+</blockquote>
+<pre class="highlight plaintext"><code>https://abcd.my39shop.com/api/v1/store/customer/addresses/{address_id_value}?access_token={token_value}
+</code></pre>
+<p>An address is fetched using GET request to <strong>GET ADDRESS URL</strong>.</p>
+
+<blockquote>
+<p>GET ADDRESS URL:</p>
+</blockquote>
+<pre class="highlight plaintext"><code>https://abcd.my39shop.com/api/v1/store/customer/addresses/{address_id_value}?access_token={token_value}
+</code></pre>
+<p>A new address is created using a POST request to <strong>NEW ADDRESS URL</strong>.</p>
+
+<blockquote>
+<p>NEW ADDRESS URL:</p>
+</blockquote>
+<pre class="highlight plaintext"><code>https://abcd.my39shop.com/api/v1/store/customer/addresses?first_name={firstname_value}&amp;last_name={lastname_value}&amp;phone={phone_value}&amp;address1={address1_value}&amp;address2={address2_value}&amp;country_id={country_id_value}&amp;state_id={state_id_value}&amp;city={city_value}&amp;zipcode={zipcode_value}&amp;access_token={token_value}
+</code></pre>
+<p>An existing address is updated using PUT request to <strong>UPADTE ADDRESS URL</strong>.</p>
+
+<blockquote>
+<p>UPDATE ADDRESS URL:</p>
+</blockquote>
+<pre class="highlight plaintext"><code>https://abcd.my39shop.com/api/v1/store/customer/addresses/{address_id_value}? first_name={firstname_value}&amp;last_name={lastname_value}&amp;phone={phone_value}&amp;address1={address1_value}&amp;address2={address2_value}&amp;country_id={country_id_value}&amp;state_id={state_id_value}&amp;city={city_value}&amp;zipcode={zipcode_value}&amp;access_token={token_value}
+</code></pre>
+          <h2 id="18-change-password">18. Change Password</h2>
+
+<h3 id="files-classes">Files/Classes</h3>
+
+<ol>
+<li>ChangePasswordActivity</li>
+</ol>
+
+<h3 id="description">Description</h3>
+
+<p>An option to change password will be shown in my account once customer is logged in using valid credentials which he has created during Sign Up process. If the customer logs in with either Facebook or Google then this option will be hidden.</p>
+
+<p>Password is changed in ChangePasswordActivity class using a PUT request to <strong>CHANGE PASSWRD URL</strong>.</p>
+
+<blockquote>
+<p>CHANGE PASSWORD URL:</p>
+</blockquote>
+<pre class="highlight plaintext"><code>https://abcd.my39shop.com/api/v1/store/customer/change_password?current_password={current_password_value}&amp;new_password={new_password_value}&amp;confirm_password={new_password_value}&amp;access_token={token_value}
+</code></pre>
+          <h2 id="19-profile">19. Profile</h2>
+
+<h3 id="files-classes">Files/Classes</h3>
+
+<ol>
+<li>ProfileActivity</li>
+</ol>
+
+<h3 id="description">Description</h3>
+
+<p>Customer’s basic profile info like his/her name, mobile number, email address is displayed in this screen. Customer can also update his profile info, except the email address. This is implemented in ProfileActivity class.
+Profile info is fetched using GET request to <strong>GET PROFILE INFO URL</strong>.</p>
+
+<blockquote>
+<p>GET PROFILE INFO URL:</p>
+</blockquote>
+<pre class="highlight plaintext"><code>https://abcd.my39shop.com/api/v1/store/customer/profile?access_token={token_value}
+</code></pre>
+<p>Profile data is updated using a PUT request to <strong>UPDATE PROFILE URL</strong>.</p>
+
+<blockquote>
+<p>UPDATE PROFILE URL:</p>
+</blockquote>
+<pre class="highlight plaintext"><code>https://abcd.my39shop.com/api/v1/store/customer/update_profile?first_name={firstname_value}&amp;last_name={lastname_value}&amp;phone={phone_value}&amp;access_token={token_value}
+</code></pre>
+          <h2 id="20-my-favourites">20. My Favourites</h2>
+
+<h3 id="files-classes">Files/Classes</h3>
+
+<ol>
+<li>MyFavouritesActivity</li>
+</ol>
+
+<h3 id="description">Description</h3>
+
+<p>All the products which are marked as favorites are displayed in a list view in MyFavouritesActivity class. Customer will be taken to product details page once a product is selected, also customer can remove a product which is added in favorite list.
+All products are fetched using GET request to <strong>GET FAVOURITE PRODUCTS URL</strong>.</p>
+
+<blockquote>
+<p>GET FAVOURITE PRODUCTS URL:</p>
+</blockquote>
+<pre class="highlight plaintext"><code>https://abcd.my39shop.com/api/v1/store/customer/favorite_products?access_token={token_value}
+</code></pre>
+<p>A favorite product is removed using DELETE request to <strong>DELETE FAVOURITE PRODUCT URL</strong>.</p>
+
+<blockquote>
+<p>DELETE FAVOURITE PRODUCT URL</p>
+</blockquote>
+<pre class="highlight plaintext"><code>https://abcd.my39shop.com/api/v1/store/customer/favorite_products/{product_id}?access_token={token_value}
+</code></pre>
+          <h1 id="2-ios-store-app-documentation">2. iOS Store App Documentation</h1>
+
+<h2 id="1-pre-requisites">1. Pre-requisites</h2>
+
+<ol>
+<li>An swift file, named as AppConfig.swift, is used to store important data regarding the store. This data includes store related URLs, keys, app color values, settings to enable/disable optional features throughout the app.</li>
+<li>A base URL which points to the app server which is used for all API requests to fetch and send the data to and from the sever.
+For example, a store with name “ABCD” will have a server URL of the form,
+<strong>https://abcd.my39shop.com/</strong>
+The same will be used in all sample API call URLs in this document.</li>
+<li>A store can be of three types, which depends on the use of extra API calls to get additional product data in the product detail screen.</li>
+<li>A normal store only needs the base URL for all its operations.</li>
+<li>A Jewelry store app requires an additional call to the jewelry app server. The URL is, <strong>http://jewelcommerce.my39shop.com/</strong></li>
+<li>A market place app requires an additional call to the market place server. The URL is,<strong>http://marketplace.my39shop.com/</strong></li>
+<li>To register ratings and reviews for products we use reviews app. The URL is,
+<strong>http://reviews.my39shop.com/</strong></li>
+<li>Throughout the app the data is shared among screens using the persistency manager. For example a local copy of customer’s cart is maintained in the persistency store, which is later used in various screens to display cart count and also in cart screen to display the content of the cart.</li>
+</ol>
+
+          <h2 id="2-appconfig-file">2. AppConfig File</h2>
+
+<p>AppConfig file is an swift file containing different store related values in boolean, color, dimensions, string, string arrays.</p>
+
+<h3 id="boolean-values">Boolean values</h3>
+
+<ol>
+<li> <em>ShowDetailsTab</em>:
+Product filter attribute details as key value pairs will be shown in product descriptions tabs in product details page if set true. </li>
+<li> <em>ShowLoaderIcon</em>:
+In product listing page store logo icon will be displayed instead of progress bar until product image is loading.</li>
+<li> <em>EnableOutOfStock</em>:
+If set true, “Out Of Stock” label is shown in the in product listing screen for individual products.</li>
+<li> <em>EnableDiscountListing</em>:
+If set true, shows discount percentage value instead of a sale label for individual products in product listing screen.</li>
+<li> <em>IsPinCodeCheckEnabled</em>:
+If set true, product detail screen shows a pin code checker for order delivery locations.</li>
+</ol>
+
+<h3 id="dimension-values">Dimension values</h3>
+
+<ol>
+<li><em>SidePanelSize</em> :
+Drawer width in home page is set using this value. Value ranges from 180dp to 320dp, set depending on text length displayed in drawer.</li>
+</ol>
+
+<h3 id="color-values">Color values</h3>
+
+<ol>
+<li><em>BaseApplicationColor</em> :
+App header color is set using this value throughout the application.</li>
+<li><em>FadedApplicationColor</em> :
+If tabs are present in home screen then the tab header text color which is not selected is set using this value. Generally this color is set either darker or lighter shade of primary color.</li>
+<li><em>GeneralButtonColor</em> :
+This color is used as background color of all button, number of cart items displayed in header and also favorite icon when a particular product is added to favorite list. Also this color is used as text color which acts as a clickable link.</li>
+<li><em>ClickedButtonColor</em> :
+Generally this color is darker or lighter shade of secondary color, used as background of buttons in clicked mode.</li>
+<li><em>SidePanelTextColor</em> :
+Text which is displayed on app drawer is set using this color value.</li>
+<li><em>SidePanelCellColor</em> :
+Sets background color of app drawer items in home page.</li>
+<li><em>SidePanelBGColor</em> :
+Background color behind store logo in app drawer is set using this color value.</li>
+<li><em>FooterColor</em> :
+Footer background color in home page is set using this color value.</li>
+<li><em>CopyrightTextColor</em> :
+Copyright text shown in footer uses this color value.</li>
+</ol>
+
+<h3 id="string-values">String values</h3>
+
+<ol>
+<li> <em>StoreId</em>:
+It is the store id associated with each store.</li>
+<li> <em>FacebookSignInClientId</em>:
+Facebook id which we get when app is created on Facebook developers page with which we can use Log In with Facebook feature.  If kept blank then Facebook button will not be visible in Log In page.</li>
+<li> <em>GoogleSignInClientId</em>:
+Google id which we get when app is created in Google developers page with which we can use Log In with Google feature.  If kept blank then Google button will not be visible in Log In page.</li>
+<li> <em>ProductShareURL</em>:
+Product URL of the store where all products are displayed.  This is used when customer shares a particular product to other customers.
+Example:  abc.com/products/</li>
+<li> <em>BaseServiceURL</em>:
+Stores URL of the store. This is used for API requests to fetch respective data.
+Example: http:// abc.my39shop.com/</li>
+<li> <em>ApplicationName</em>:
+Stores name of the app or store name.</li>
+<li> <em>PincodeURL</em>:
+Stores URL of the file where all pin code values are stored. If kept blank then the pin code checker functionality is disabled product details page.</li>
+<li> <em>ProductColor</em>:
+Stores URL of server where all product images for the particular store are kept.</li>
+<li><em>CopyrightText</em>:
+Text which will be displayed in footer section on home page is kept here. Keep blank if not required to display copyright text in footer.</li>
+<li><em>ApplicationClientId</em>:
+Stores value which is generated in oauth/applications. This is used to generate valid token when customer logs in the app.</li>
+<li><em>ApplicationClientSecret</em>:
+Stores value which is generated in oauth/applications. This is used to generate valid token when customer logs in the app.</li>
+<li><em>ApplicationFBLink</em>:
+Stores link to Facebook page of the store. Keep blank if not required which will also hide Facebook icon in footer on home page.</li>
+<li><em>ApplicationTwitterLink</em>:
+Stores link to twitter page of the store. Keep blank if not required which will also hide twitter icon in footer on home page.</li>
+<li><em>ApplicationInstagramLink</em>:
+Stores link to Instagram page of the store. Keep blank if not required which will also hide Instagram icon in footer on home page.</li>
+<li><em>ApplicationPinterestLink</em>:
+Stores link to Pinterest page of the store. Keep blank if not required which will also hide Pinterest icon in footer on home page.</li>
+<li><em>ApplicationYoutubeLink</em>:
+Stores link to YouTube page of the store. Keep blank if not required which will also hide YouTube icon in footer on home page.</li>
+<li><em>ApplicationGPlusLink</em>:
+Stores link to Google Plus page of the store. Keep blank if not required which will also hide Google Plus icon in footer on home page.</li>
+<li><em>ContactPhone</em>:
+Stores phone number which will be displayed in contact us page.</li>
+<li><em>ContactMail</em>:
+Stores email ID which will be displayed in contact us page.</li>
+<li><em>StoreType</em>:
+There can be 3 values jewelry, marketplace or blank. If type is jewelry then extra details from jewelry app is fetched. For marketplace data from marketplace app is fetched or else keep blank.</li>
+</ol>
+
+<h3 id="string-array-values">String array values</h3>
+
+<p>Add multiple string values to these arrays. </p>
+
+<ol>
+<li><em>sort_criteria</em> :
+Add keys which are used in api based on which sorting will be performed in product listing page.
+Example:
+    priority,
+    price_ascending,
+    price_descending,</li>
+<li><em>sort_display</em> :
+Add names which will be displayed sort criteria spinner in product listing page.
+<aside class="notice"><em>sort_criteria</em> and <em>sort­_­display</em> values are related to each other. Each entry from <em>sort_criteria</em> corresponds to a value in <em>sort_display</em>, hence they are key-value pairs placed in two separate arrays at same indices.</aside>
+Example:
+    Popular,
+    Price Low-High,
+    Price High-Low,</li>
+<li><em>categoryListing</em> :
+Add category id to this array, the sub categories of that category will be displayed in separate page before showing products.
+Example:  Consider category city which will have different city names. Upon clicking city name another page will be displayed where categories will be displayed for customer to select, like brands in the particular city.</li>
+</ol>
+
+          <h2 id="3-home-screen">3. Home Screen</h2>
+
+<h3 id="files-classes">Files/Classes:</h3>
+
+<ol>
+<li>DashBoardController</li>
+<li>WebDashBoardViewController</li>
+</ol>
+
+<h3 id="description">Description</h3>
+
+<p>The splash screen is used to fetch all the data required for app to work normally. The data that is fetched in the background includes</p>
+
+<p><em>Categories:</em> The categories will appear in the navigation menu, each category can have products or further subcategories under it. These categories are fetched by making a GET request to the <strong>CATEGORY URL</strong>.</p>
+
+<blockquote>
+<p>CATEGORY URL</p>
+</blockquote>
+<pre class="highlight plaintext"><code>https://abcd.my39shop.com/api/v1/store/categories
+</code></pre>
+<p><em>Banners:</em> All the banners that are to be displayed in the home screen are fetched by making a GET request with the following <strong>BANNER URL</strong> </p>
+
+<blockquote>
+<p>BANNER URL</p>
+</blockquote>
+<pre class="highlight plaintext"><code>https://abcd.my39shop.com/api/v1/store/home_page/banners
+</code></pre>
+<p><em>Featured Products:</em>  For fetching featured products make a GET request to <strong>FEATURED PRODUCTS URL</strong></p>
+
+<blockquote>
+<p>FEATURED PRODUCTS URL</p>
+</blockquote>
+<pre class="highlight plaintext"><code>https://abcd.my39shop.com/api/v1/store/products/featured
+</code></pre>
+<p><em>Supported pin codes:</em> There is no fixed format for the pin code file URL, it varies from store to store</p>
+
+<p><em>Discount Coupons:</em> For fetching all the active discount coupons, make a GET request to <strong>DISCOUNT COUPONS URL</strong></p>
+
+<blockquote>
+<p>DISCOUNT COUPOUNS URL</p>
+</blockquote>
+<pre class="highlight plaintext"><code>https://abcd.my39shop.com/api/v1/store/discount_coupons
+</code></pre>
+<p><em>Countries:</em> All the countries that are listed when customer adds an address for billing/delivery. Make a GET request with <strong>COUNTRIES URL</strong></p>
+
+<blockquote>
+<p>COUNTRIES URL</p>
+</blockquote>
+<pre class="highlight plaintext"><code>https://abcd.my39shop.com/api/v1/countries
+</code></pre>
+<p><em>Filter Attributes:</em> The different criteria used for filtering products are fetched by making a GET request to <strong>FILTER ATTRIBUTES URL</strong></p>
+
+<blockquote>
+<p>FILTER ATTRIBUTES URL</p>
+</blockquote>
+<pre class="highlight plaintext"><code>https://abcd.my39shop.com/api/v1/store/filter_attributes
+</code></pre>
+<p><strong>The home screen is of two types:</strong></p>
+
+<p><strong>Native Home</strong>, where all the data like banners and featured products are displayed natively. The DashBoardController is used to create tab implementation where we have two tabs namely, Home and Featured Collection. </p>
+
+<p>The Home tab displays all the banners related to the store. A banner can be of two types, list banner which is displayed in an automated slideshow and other banners which are displayed one below the other. A banner can have a category id associated with it, on click of such a banner the app takes the customer to the product listing page for that category.
+The page footer contains links to different social media page links for the store. This is done in the HomeFragment class.</p>
+
+<p>The Featured Collection tab displays a grid view collection of all the featured products. On clicking any of the products the app takes the customer to the product detail screen for the selected product. This is done in the FeaturedProductsFragment class.</p>
+
+<p>If a store does not have any featured products the tab implementation is removed thus hiding the featured collection tab.</p>
+
+<p><strong>Web home</strong> implementation uses a web view to display a web page designed specifically for a mobile app, this is achieved in the WebDashBoardViewController. The URL used for displaying the web home is <strong>WEB HOME URL</strong></p>
+
+<blockquote>
+<p>WEB HOME URL</p>
+</blockquote>
+<pre class="highlight plaintext"><code>https://abcd.my39shop.com/pages/mobile_home
+</code></pre>
+<p>This web home page can have banners related to categories and/or products as well as featured product collection. These items have their hyperlinks set up in such a way that a category banner will have “category/category_id” at the end of the hyperlink, a product will have <em>product/product_id</em> at the end of it. The click events on these items are captured by listening to the reload event of the web view and depending on the content of the link the app takes the customer either to the product listing page of the selected category or the product detail page of the selected product.</p>
+
+          <h2 id="4-navigation-menu">4. Navigation Menu</h2>
+
+<h3 id="files-classes">Files/Classes</h3>
+
+<ol>
+<li>SidePanelController</li>
+</ol>
+
+<h3 id="description">Description</h3>
+
+<p>The Navigation Menu has two sections,</p>
+
+<ol>
+<li><p>The top section displays all the top level categories for the store. If any category has sub-categories the menu will take the customer to the next level when customer clicks on the top level category and so on.</p></li>
+<li><p>The bottom section displays static items like Contact Us, Login, and Sign Up when the customer is not logged in. When the customer is logged in Login and Sign Up are replaced by My Account and Log Out.</p></li>
+</ol>
+
+          <h2 id="5-product-listing">5. Product Listing</h2>
+
+<h3 id="files-classes">Files/Classes</h3>
+
+<ol>
+<li>ProductListController</li>
+<li>SearchController</li>
+</ol>
+
+<h3 id="description">Description</h3>
+
+<p>The product listing page has a grid view collection displaying the products of the currently selected category. The products are sorted according to a default sort criteria. Customer can change the way products are displayed either in grid format or list format if display_option is set to true in config file. Customer can sort products using various sorting options available in sort spinner. Customer can also filter out products by applying various filter options available in filter screen. Once filters are applied a button will be displayed to customer to reset all filters. Upon clicking on product customer is taken to product details page. If <em>show_out_of_stock</em> flag is marked true in config then out of stock will be displayed on product image for products with no stock. If <em>show_favourite_listng</em> is marked true in config then customer will have favorite icon on product image to directly add product to favorite list.
+Data is fetched by making a GET request <strong>PRODUCT LISTING URL</strong></p>
+
+<blockquote>
+<p>PRODUCT LISTING URL</p>
+</blockquote>
+<pre class="highlight plaintext"><code>https://abcd.my39shop.com/api/v1/store/products?active_catgory={category_id}&amp;sort_criteria={sort_criteria_value}&amp;facets={false}&amp;per_page={per_page_value}&amp;page={page_value}
+</code></pre>
+<p>If out of stock is to be displayed then additional parameter variants with a value 1 will be added to the <strong>PRODUCT LISTING URL</strong>.</p>
+
+<p>Immediately after the above request make another request by just changing the value for facets parameter to true. The result of this request will be used for setting up the filters as explained later.</p>
+
+<h3 id="search">Search</h3>
+
+<p>Customer can search for a product by clicking search icon, SearchController will be opened where customer can type the search criteria and products will be displayed which matches the criteria. Previously searched criteria will be saved in recent searches list and customer can search products again by selecting it. Latest search will be shown on top. Maximum of 10 searches will be saved in recent search list and as the new searches are added old ones are removed from the list. To get data for a search query make a get request to <strong>SEARCH URL</strong></p>
+
+<blockquote>
+<p>SEARCH URL</p>
+</blockquote>
+<pre class="highlight plaintext"><code>https://abcd.my39shop.com/api/v1/store/products?search_criteria={search_query}&amp;sort_criteria={sort_criteria_value}&amp;facets={false}&amp;per_page={per_page_value}&amp;page={page_value}
+</code></pre>
+<h3 id="filters">Filters</h3>
+
+<p>The filter attributes fetched at app start up are used in the filters screen, which returns all the attributes with attribute indices as key-value pairs. When product listing is opened the products will either belong to a category or a result of a search query. So when customer opens the filter screen we need to only show those attributes that are relevant to the current collection of products.
+For doing this, as explained above, we need to make a call to the same API (first call) that was called for either category listing or a search query with just a single change in the parameters. The parameters “facets” is by default false in the first call and then we have sent it as true in the second call without changing any other parameter. This returns a list of attribute indices that are relevant to the current list of products, using which we can hide the non –relevant attributes.
+Once the customer selects the filters make a GET request using the same API with an extra parameter called filter_attributes and its value should be a comma separated string of all the selected filter attribute indices.</p>
+
+          <h2 id="6-category-listing">6. Category Listing</h2>
+
+<h3 id="files-classes">Files/Classes</h3>
+
+<ol>
+<li>CategoryListController</li>
+</ol>
+
+<h3 id="description">Description</h3>
+
+<p>The category listing page displays a grid view collection of all the sub categories of a selected category. This screen is used in only select stores. This feature is enabled in store’s config file by adding the category id, for which the sub categories are to be displayed in a grid view, to the <em>category_listing</em> array.</p>
+
+          <h2 id="7-product-detail">7. Product Detail</h2>
+
+<h3 id="files-classes">Files /Classes</h3>
+
+<ol>
+<li>BaseDetailController</li>
+<li>ProductDetailController</li>
+</ol>
+
+<h3 id="description">Description</h3>
+
+<p>The product detail screen displays product&rsquo;s information like product images, name, price, different descriptions, and variants along with lists of similar/related/recently viewed products. It also provides <em>Add to cart</em> or <em>Buy Now</em> operation to the customer.
+To get all the product data make a GET request to <strong>PRODUCT DETAILS URL</strong></p>
+
+<blockquote>
+<p>PRODUCT DETAILS URL</p>
+</blockquote>
+<pre class="highlight plaintext"><code>https://abcd.my39shop.com/api/v1/store/products/{product_id}
+</code></pre>
+<p>This API returns all the details of the product including a list of related products which is then used directly to display the related products list.</p>
+
+<p>To display similar products we need to fetch the similar products using a separate API call with a GET request to <strong>SIMILAR PRODUCTS URL</strong></p>
+
+<blockquote>
+<p>SIMILAR PRODUCTS URL</p>
+</blockquote>
+<pre class="highlight plaintext"><code>https://abcd.my39shop.com/api/v1/store/products/{product_id}/similar_products
+</code></pre>
+<p>To display recently viewed products we use the normal product listing API with which we can get the products by passing a comma separated string of all the recent product ids. This ids string, containing ids of 5 products at the most, is stored using shared preference.
+Fetch the recent products by making a GET request to <strong>RECENT PRODUCTS URL</strong></p>
+
+<blockquote>
+<p>RECENT PRODUCTS URL</p>
+</blockquote>
+<pre class="highlight plaintext"><code>https://abcd.my39shop.com/api/v1/store/products?page=1&amp;per_page=5&amp;facets=false&amp;ids={ids_string}
+</code></pre>
+<p>The product detail screen has an <em>add to favorite</em> option which requires the customer to login as the API needs customer&rsquo;s access token. If customer is not logged in, on selecting this option customer is taken to the login screen.</p>
+
+<p>To add product as favorite make a POST request to <strong>ADD TO FAVORITE URL</strong></p>
+
+<blockquote>
+<p>ADD TO FAVOURITE URL</p>
+</blockquote>
+<pre class="highlight plaintext"><code>https://abcd.my39shop.com/api/v1/store/cart/{cart_token}/add_items?items[][id]={id_value}&amp;items[][quantity]={quantity_value}
+</code></pre>
+<p>For Jewelry store app, additional product data from jewelry server is fetched using a GET request <strong>JEWELRY DATA URL</strong></p>
+
+<blockquote>
+<p>JEWELRY DATA URL</p>
+</blockquote>
+<pre class="highlight plaintext"><code>https://jewelcommerce.my39shop.com/api/v1/store/products/{product_id}?store_id={store_id_value}
+</code></pre>
+<p>Another API call is required to fetch product price data with a GET request to <strong>PRODUCT PRICE DATA</strong></p>
+
+<blockquote>
+<p>PRODUCT PRICE DATA</p>
+</blockquote>
+<pre class="highlight plaintext"><code>https://jewelcommerce.my39shop.com/api/v1/store/products/{product_id}/price?store_id={store_id_value}
+</code></pre>
+<p>To create a cart or to add an item to cart make a POST request to <strong>ADD TO CART URL</strong></p>
+
+<blockquote>
+<p>ADD TO CART</p>
+</blockquote>
+<pre class="highlight plaintext"><code>https://jewelcommerce.my39shop.com/api/v1/store/cart/items?store_id={store_id_value}&amp;product_id={id_value}&amp;quantity={quantity_value}&amp;metal_option_id={metal_option_value}&amp;metal_size_id={metal_size_value}&amp;gem_options[{option_id_value}]={option_value}
+</code></pre>
+<p>If cart exists, add an extra parameter <em>cart_token</em> to the above URL, absence of it means the method will create a new cart. </p>
+
+<p>For a market place app, additional data regarding all the vendors for the selected product is fetched using a GET request to <strong>MARKET PLACE URL</strong></p>
+
+<blockquote>
+<p>MARKET PLACE URL</p>
+</blockquote>
+<pre class="highlight plaintext"><code>https://marketplace.my39shop.com/api/v1/store/products/{product_id}?store_id={store_id_value}
+</code></pre>
+<p>To create a cart or add item to cart for market place app use a POST request with following URL <strong>ADD TO CART WITH MARKET PLACE</strong></p>
+
+<blockquote>
+<p>ADD TO CART WITH MARKET PLACE</p>
+</blockquote>
+<pre class="highlight plaintext"><code>https://marketplace.my39shop.com/api/v1/store/cart/items?store_id={store_id_value}&amp;product_id={id_value}&amp;quantity={quantity_value}&amp;metal_option_id={metal_option_value}&amp;metal_size_id={metal_size_value}&amp;gem_options[{option_id_value}]={option_value}
+</code></pre>
+<p>If cart exists, add an extra parameter <em>cart_token</em> to the above URL, absence of it means the method will create a new cart.</p>
+
+<p>The product detail screen differs for different stores, the way in which data is represented and displayed differs from store to store. We have multiple classes for product detail implementations and the respective detail screen is opened using a switch case statement over a unique scheme value from config file. For example if the scheme is <em>ABCD</em> it will open the product detail screen designed for ABCD store, if there is one, else it will open ProductDetailController by defaullt.</p>
+
+<p>All the basic functionalities like get product data, share functionality, add to favorite are implemented in BaseDetailController class. This class is a super class to all product detail activity classes hence all the common functionalities are indirectly present in all sub classes by virtue of inheritance. </p>
+
+          <h2 id="8-cart-amp-checkout">8. Cart &amp; Checkout</h2>
+
+<h3 id="files-classes">Files/Classes</h3>
+
+<ol>
+<li>CartController</li>
+</ol>
+
+<h3 id="description">Description</h3>
+
+<p>The cart screen displays the content of customer&rsquo;s cart, including cart items with their details, total amount, discount coupons, gift cards, and reward points applied, if any. This is implemented in CartFragment class.
+There are multiple API requests in this screen, these include: </p>
+
+<ol>
+<li><em>Get cart details</em>: Each cart has a token using which we can get the updated cart by making a GET request to <strong>GET CART URL</strong>.</li>
+</ol>
+
+<blockquote>
+<p>GET CART URL:</p>
+</blockquote>
+<pre class="highlight plaintext"><code>https://abcd.my39shop.com/api/v1/store/cart/{cart_token}/get
+</code></pre>
+<ol>
+<li><em>Update cart item quantity</em>: Cart item quantity can be increased or decreased with a PATCH request to <strong>UPDATE QUANTITY URL</strong>.</li>
+</ol>
+
+<blockquote>
+<p>UPDATE QUANTITY URL</p>
+</blockquote>
+<pre class="highlight plaintext"><code>https://abcd.my39shop.com/api/v1/store/cart/{cart_token}/update_quantity?id={id_value}&amp;quantity={quantity_value}
+</code></pre>
+<ol>
+<li><em>Remove cart item</em>: Cart item can be removed with a DELETE request to <strong>REMOVE ITEM URL</strong>.</li>
+</ol>
+
+<blockquote>
+<p>REMOVE ITEM URL:</p>
+</blockquote>
+<pre class="highlight plaintext"><code>https://abcd.my39shop.com/api/v1/store/cart/{cart_token}/delete?items[][id]={id_value}
+</code></pre>
+<ol>
+<li><em>Apply discount coupon</em>:  To apply a discount coupon or a gift card make a PATCH request to <strong>APPLY COUPON URL</strong>.</li>
+</ol>
+
+<blockquote>
+<p>APPLY COUPON URL:</p>
+</blockquote>
+<pre class="highlight plaintext"><code>https://abcd.my39shop.com/api/v1/store/cart/{cart_token}/apply_discount_coupon?discount_coupon_code={coupon_value}
+</code></pre>
+<ol>
+<li><em>Remove discount coupon</em>: To remove a discount coupon make a PATCH request to <strong>REMOVE COUPON URL</strong>.</li>
+</ol>
+
+<blockquote>
+<p>REMOVE COUPON URL:</p>
+</blockquote>
+<pre class="highlight plaintext"><code>https://abcd.my39shop.com/api/v1/store/cart/{cart_token}/remove_discount_coupon
+</code></pre>
+<ol>
+<li><em>Remove gift card</em>: To remove a gift card make a PATCH request to <strong>REMOVE GIFT CARD URL</strong>.</li>
+</ol>
+
+<blockquote>
+<p>REMOVE GIFT CARD URL:</p>
+</blockquote>
+<pre class="highlight plaintext"><code>https://abcd.my39shop.com/api/v1/store/cart/{cart_token}/remove_gift_card
+</code></pre>
+<ol>
+<li><em>Apply reward points</em>: Reward points can be applied with a PATCH request to <strong>APPLY REWARD POINTS URL</strong>.</li>
+</ol>
+
+<blockquote>
+<p>APPLY REWARD POINTS URL:</p>
+</blockquote>
+<pre class="highlight plaintext"><code>https://abcd.my39shop.com/api/v1/store/cart/{cart_token}/apply_reward_points?reward_points={reward_points_value}
+</code></pre>
+<ol>
+<li><em>Remove reward points</em>: Reward points can be removed with a PATCH request to <strong>REMOVE GIFT CARD URL</strong>.</li>
+</ol>
+
+<blockquote>
+<p>REMOVE GIFT CARD URL:</p>
+</blockquote>
+<pre class="highlight plaintext"><code>https://abcd.my39shop.com/api/v1/store/cart/{cart_token}/remove_reward_points
+</code></pre>
+<p>All the above calls, except get cart, can have an additional parameter in access_token if the customer is logged in.</p>
+
+<p>The checkout is implemented in a webview using the checkout process of the web store.
+When the customer proceeds to checkout, if not logged in, he/she is asked to log in with an option to checkout as guest.</p>
+
+<p>To start checkout, following <strong>CHECKOUT URL</strong> is opened in the webview.</p>
+
+<blockquote>
+<p>CHECKOUT URL:</p>
+</blockquote>
+<pre class="highlight plaintext"><code>https://abcd.my39shop.com/checkouts/init?cart_id={cart_token_value}&amp;is_mobile={true}
+</code></pre>
+<p>If the customer is logged in, append access_token parameter to the above URL. </p>
+
+<p>The customer then follows the checkout steps as the app takes him/her forward through the webview. We listen to the reload event of the web view and depending on the content of the URL that is loaded the app takes certain actions. If the URL contains the word “confirm” it means that customer has successfully placed the order so we clear the cart and on the next reload take the customer to the home screen.</p>
+
+          <h2 id="9-contact-us">9. Contact Us</h2>
+
+<h3 id="files-classes">Files/Classes</h3>
+
+<ol>
+<li>ContactUsController</li>
+</ol>
+
+<h3 id="description">Description</h3>
+
+<p>The contact us screen has three sections,</p>
+
+<ol>
+<li><p>Support phone number for the store is mentioned in the first section, with an option to make a call from the app by tapping the phone icon.</p></li>
+<li><p>Second section displays Store’s support email address, a tap on the mail icon opens the default mail composer.</p></li>
+<li><p>The third section is a form which accepts different inputs from the customer like Name, Email, Phone and Comments. This info can then be submitted with a POST request to <strong>SUBMIT FEEDBACK URL</strong>.</p></li>
+</ol>
+
+<blockquote>
+<p>SUBMIT FEEDBACK URL:</p>
+</blockquote>
+<pre class="highlight plaintext"><code>https://abcd.my39shop.com/api/v1/store/contact_us?email={email_value}&amp;subject=Feedback&amp;fields[name]={name_value}&amp;fields[phone]={phone_value}&amp;fields[note]={comments_value}
+</code></pre>
+          <h2 id="10-login">10. Login</h2>
+
+<h3 id="files-classes">Files/Classes</h3>
+
+<ol>
+<li>i.   LoginController</li>
+</ol>
+
+<h3 id="description">Description</h3>
+
+<p>There are 3 ways for a customer to log in,</p>
+
+<ol>
+<li> Native login: The customer can log in with the username and password he has registered with the store by signing up. The login API needs customer’s username and password along with two keys that are required for authentication. These keys are called Client Id and Client Secret, they are unique for each store. The login API needs a POST request to <strong>LOGIN URL</strong>.</li>
+</ol>
+
+<blockquote>
+<p>LOGIN URL:</p>
+</blockquote>
+<pre class="highlight plaintext"><code>https://abcd.my39shop.com/api/v1/store/customer/accounts/sign_in?login={email_value}&amp;password={password_value}&amp;client_id={id_value}&amp;secret={secret_value}
+</code></pre>
+<ol>
+<li> Login with Google: The app is registered with the Google developer console using it’s package name to enable Google Sign In, a Google client id is generated in this process which is used to obtain a token that is further used in the sign in with Google API which uses the <strong>SIGN IN WITH GOOGLE URL</strong>.</li>
+</ol>
+
+<blockquote>
+<p>SIGN IN WITH GOOGLE URL:</p>
+</blockquote>
+<pre class="highlight plaintext"><code>https://abcd.my39shop.com/api/v1/store/customer/accounts/sign_in_with_google?access_token={token_value}&amp;client_id={id_value}&amp;secret={secret_value}
+</code></pre>
+<ol>
+<li> Login with Facebook: The app is registered with the Facebook developer console using it’s package name to enable Facebook Sign In, a Facebook App Id is generated in this process which is used to obtain a token that is further used in the sign in with Facebook API which uses the <strong>SIGN IN WITH FACEBOOK URL</strong>.</li>
+</ol>
+
+<blockquote>
+<p>SIGN IN WITH FACEBOOK URL:</p>
+</blockquote>
+<pre class="highlight plaintext"><code>https://abcd.my39shop.com/api/v1/store/customer/accounts/sign_in_with_facebook?access_token={token_value}&amp;client_id={id_value}&amp;secret={secret_value}
+</code></pre>
+<p>Upon login with any of the above methods an access token is generated which is used to authenticate and identify the customer. The app maintains a local copy of the customer’s cart which needs to be synchronized with server copy which is done right after login using the access token.</p>
+
+<p>If there is no local cart, using access token customer’s cart is fetched and stored locally. This is done using a GET request to <strong>GET CART URL</strong>.</p>
+
+<blockquote>
+<p>GET CART URL:</p>
+</blockquote>
+<pre class="highlight plaintext"><code>https://abcd.my39shop.com/api/v1/store/cart?access_token={token_value}
+</code></pre>
+<p>If there is a local copy of the cart, it is associated with the customer, to make sure both the carts are in sync, with a GET request to <strong>ASSOCIATE CART URL</strong>.</p>
+
+<blockquote>
+<p>ASSOCIATE CART URL:</p>
+</blockquote>
+<pre class="highlight plaintext"><code>https://abcd.my39shop.com/api/v1/store/cart/{cart_token}/associate_cart_to_customer?access_token={token_value}
+</code></pre>
+          <h2 id="11-sign-up">11. Sign Up</h2>
+
+<h3 id="files-classes">Files/Classes</h3>
+
+<ol>
+<li>SignUpController</li>
+</ol>
+
+<h3 id="description">Description</h3>
+
+<p>Customer sign up needs details like First name, Last name, Username(Email), Phone, Password(twice for confirmation) and Yes or No for marketing mail subscription. Other than Phone all the fields are mandatory. All this data is used to register the customer by making a POST request to the <strong>SIGN UP URL</strong>.</p>
+
+<blockquote>
+<p>SIGN UP URL:</p>
+</blockquote>
+<pre class="highlight plaintext"><code>https://abcd.my39shop.com/api/v1/store/customer/accounts/sign_up?first_name={firstname_value}&amp;last_name={lastname_value}&amp;login={email_value}&amp;phone={phone_value}&amp;password={password_value}&amp;password_confirmation={password_value}&amp;marketing_mails={0 or 1}
+</code></pre>
+<p>This will send an activation link to the registered email address and on clicking it on the device where the app is installed the app is launched as a listener set up to receive the click event. The listener also captures a link containing the registered email id and the activation token required to activate customer’s account.
+The account is then activated using a PUT request to <strong>ACTIVATION URL</strong>.</p>
+
+<blockquote>
+<p>ACTIVATION URL:</p>
+</blockquote>
+<pre class="highlight plaintext"><code>"https://abcd.my39shop.com/api/v1/store/customer/accounts/activate?activation_token={token_value}&amp;login={email_value}
+</code></pre>
+          <h2 id="12-forgot-password">12. Forgot Password</h2>
+
+<h3 id="files-classes">Files/Classes</h3>
+
+<ol>
+<li>ForgotPasswordController</li>
+</ol>
+
+<h3 id="description">Description</h3>
+
+<p>The forgot password screen lets the customer request a change of password by first giving an option to reset the password using his/her registered email address which sends a password reset link and then letting the customer set a new password using the password by launching the app when customer clicks on the link with help of a listener. The listener also captures a link containing a recovery token for setting a new password.
+To send a reset link make a GET request to <strong>RESET PASSWORD URL</strong>.</p>
+
+<blockquote>
+<p>RESET PASSWORD URL:</p>
+</blockquote>
+<pre class="highlight plaintext"><code>https://abcd.my39shop.com/api/v1/store/customer/accounts/forgot_password?login={email_value}
+</code></pre>
+<p>To set a new password, make a PUT request to <strong>NEW PASSWORD URL</strong>.</p>
+
+<blockquote>
+<p>NEW PASSWORD URL:</p>
+</blockquote>
+<pre class="highlight plaintext"><code>https://abcd.my39shop.com/api/v1/store/customer/accounts/set_password?recovery_token={token_value}&amp;password={password_value}&amp;password_confirmation={password_value}
+</code></pre>
+          <h2 id="13-my-account">13. My Account</h2>
+
+<h3 id="files-classes">Files/Classes</h3>
+
+<ol>
+<li>MyAccountController</li>
+</ol>
+
+<h3 id="description">Description</h3>
+
+<p>My Account is used to display links to customer’s orders, his/her saved addresses for order delivery, changing password, customer profile info and all the products which are marked as favorites by customer. My Account screen will be displayed once customer is logged in successfully in the app, also a link will be added in app drawer for customer to open account details. Also logout link is provided so that customer can be logout successfully from the app.</p>
+
+          <h2 id="14-my-orders">14. My Orders</h2>
+
+<h3 id="files-classes">Files/Classes</h3>
+
+<ol>
+<li>MyOrdersController </li>
+<li>OrderDetailsController</li>
+</ol>
+
+<h3 id="description">Description</h3>
+
+<p>Customer orders will be fetched and displayed using in a list view. Once customer will click on a particular order he/she will be taken to order details screen. This is implemented in MyOrdersController class.
+Orders are fetched using the GET request to <strong>GET ORDERS URL</strong>.</p>
+
+<blockquote>
+<p>GET ORDERS URL:</p>
+</blockquote>
+<pre class="highlight plaintext"><code>https://abcd.my39shop.com/api/v1/store/customer/orders?access_token={token_value}
+</code></pre>
+<p>Order Details are fetched using a GET request to <strong>GET ORDER DETAIL URL</strong>.</p>
+
+<blockquote>
+<p>GET ORDER DETAIL URL:</p>
+</blockquote>
+<pre class="highlight plaintext"><code>https://abcd.my39shop.com/api/v1/store/customer/orders/{order_id}?access_token={token_value}
+</code></pre>
+          <h2 id="15-addresses">15. Addresses</h2>
+
+<h3 id="files-classes">Files/Classes</h3>
+
+<ol>
+<li>MyAddressesController</li>
+<li>AddAddressController</li>
+</ol>
+
+<h3 id="description">Description</h3>
+
+<p>Customer’s saved addresses are displayed here. There is an option to add a new address, update or delete an existing address. This is implemented in the AddressesActivity class. A maximum of 5 addresses can be added. 
+To add and update an address AddAddressController class is used.
+All addresses are fetched using a GET request to <strong>GET ADDRESSES URL</strong>.</p>
+
+<blockquote>
+<p>GET ADDRESSES URL:</p>
+</blockquote>
+<pre class="highlight plaintext"><code>https://abcd.my39shop.com/api/v1/store/customer/addresses?access_token={token_value}
+</code></pre>
+<p>An address is deleted using DELETE request <strong>DELETE ADDRESS URL</strong>.</p>
+
+<blockquote>
+<p>DELETE ADDRESS URL:</p>
+</blockquote>
+<pre class="highlight plaintext"><code>https://abcd.my39shop.com/api/v1/store/customer/addresses/{address_id_value}?access_token={token_value}
+</code></pre>
+<p>An address is fetched using GET request to <strong>GET ADDRESS URL</strong>.</p>
+
+<blockquote>
+<p>GET ADDRESS URL:</p>
+</blockquote>
+<pre class="highlight plaintext"><code>https://abcd.my39shop.com/api/v1/store/customer/addresses/{address_id_value}?access_token={token_value}
+</code></pre>
+<p>A new address is created using a POST request to <strong>NEW ADDRESS URL</strong>.</p>
+
+<blockquote>
+<p>NEW ADDRESS URL:</p>
+</blockquote>
+<pre class="highlight plaintext"><code>https://abcd.my39shop.com/api/v1/store/customer/addresses?first_name={firstname_value}&amp;last_name={lastname_value}&amp;phone={phone_value}&amp;address1={address1_value}&amp;address2={address2_value}&amp;country_id={country_id_value}&amp;state_id={state_id_value}&amp;city={city_value}&amp;zipcode={zipcode_value}&amp;access_token={token_value}
+</code></pre>
+<p>An existing address is updated using PUT request to <strong>UPADTE ADDRESS URL</strong>.</p>
+
+<blockquote>
+<p>UPDATE ADDRESS URL:</p>
+</blockquote>
+<pre class="highlight plaintext"><code>https://abcd.my39shop.com/api/v1/store/customer/addresses/{address_id_value}? first_name={firstname_value}&amp;last_name={lastname_value}&amp;phone={phone_value}&amp;address1={address1_value}&amp;address2={address2_value}&amp;country_id={country_id_value}&amp;state_id={state_id_value}&amp;city={city_value}&amp;zipcode={zipcode_value}&amp;access_token={token_value}
+</code></pre>
+          <h2 id="16-change-password">16. Change Password</h2>
+
+<h3 id="files-classes">Files/Classes</h3>
+
+<ol>
+<li>ChangePasswordController </li>
+</ol>
+
+<h3 id="description">Description</h3>
+
+<p>An option to change password will be shown in my account once customer is logged in using valid credentials which he has created during Sign Up process. If the customer logs in with either Facebook or Google then this option will be hidden.</p>
+
+<p>Password is changed in ChangePasswordController class using a PUT request to <strong>CHANGE PASSWRD URL</strong>.</p>
+
+<blockquote>
+<p>CHANGE PASSWORD URL:</p>
+</blockquote>
+<pre class="highlight plaintext"><code>https://abcd.my39shop.com/api/v1/store/customer/change_password?current_password={current_password_value}&amp;new_password={new_password_value}&amp;confirm_password={new_password_value}&amp;access_token={token_value}
+</code></pre>
+          <h2 id="17-profile">17. Profile</h2>
+
+<h3 id="files-classes">Files/Classes</h3>
+
+<ol>
+<li>ProfileController </li>
+</ol>
+
+<h3 id="description">Description</h3>
+
+<p>Customer’s basic profile info like his/her name, mobile number, email address is displayed in this screen. Customer can also update his profile info, except the email address. This is implemented in ProfileController class.
+Profile info is fetched using GET request to <strong>GET PROFILE INFO URL</strong>.</p>
+
+<blockquote>
+<p>GET PROFILE INFO URL:</p>
+</blockquote>
+<pre class="highlight plaintext"><code>https://abcd.my39shop.com/api/v1/store/customer/profile?access_token={token_value}
+</code></pre>
+<p>Profile data is updated using a PUT request to <strong>UPDATE PROFILE URL</strong>.</p>
+
+<blockquote>
+<p>UPDATE PROFILE URL:</p>
+</blockquote>
+<pre class="highlight plaintext"><code>https://abcd.my39shop.com/api/v1/store/customer/update_profile?first_name={firstname_value}&amp;last_name={lastname_value}&amp;phone={phone_value}&amp;access_token={token_value}
+</code></pre>
+          <h2 id="18-my-favourites">18. My Favourites</h2>
+
+<h3 id="files-classes">Files/Classes</h3>
+
+<ol>
+<li>MyFavouritesController</li>
+</ol>
+
+<h3 id="description">Description</h3>
+
+<p>All the products which are marked as favorites are displayed in a list view in MyFavouritesController class. Customer will be taken to product details page once a product is selected, also customer can remove a product which is added in favorite list.
+All products are fetched using GET request to <strong>GET FAVOURITE PRODUCTS URL</strong>.</p>
+
+<blockquote>
+<p>GET FAVOURITE PRODUCTS URL:</p>
+</blockquote>
+<pre class="highlight plaintext"><code>https://abcd.my39shop.com/api/v1/store/customer/favorite_products?access_token={token_value}
+</code></pre>
+<p>A favorite product is removed using DELETE request to <strong>DELETE FAVOURITE PRODUCT URL</strong>.</p>
+
+<blockquote>
+<p>DELETE FAVOURITE PRODUCT URL</p>
+</blockquote>
+<pre class="highlight plaintext"><code>https://abcd.my39shop.com/api/v1/store/customer/favorite_products/{product_id}?access_token={token_value}
+</code></pre>
       </div>
       <div class="dark-box">
           <div class="lang-selector">
-                <a href="#" data-language-name="shell">shell</a>
-                <a href="#" data-language-name="ruby">ruby</a>
-                <a href="#" data-language-name="python">python</a>
-                <a href="#" data-language-name="javascript">javascript</a>
+                <a href="#" data-language-name="API">API</a>
           </div>
       </div>
     </div>
