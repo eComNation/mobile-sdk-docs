@@ -1,4 +1,4 @@
-## 10. Cart & Checkout
+## 9. Cart & Checkout
 
 ###Files/Classes
 

@@ -1,4 +1,4 @@
-## 7. Category Listing
+## 6. Category Listing
 
 ### Files/Classes
 

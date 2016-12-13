@@ -1,4 +1,4 @@
-## 8. Product Detail
+## 7. Product Detail
 
 ### Files /Classes
 

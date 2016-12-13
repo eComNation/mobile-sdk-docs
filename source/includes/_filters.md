@@ -1,4 +1,4 @@
-## 6. Filters
+## 5. Filters
 
 ### Files/Classes
 1. FilterActivity
