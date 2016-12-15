@@ -16,10 +16,24 @@ The splash screen is used to fetch all the data required for app to work normall
 
 *Categories:* The categories will appear in the navigation menu, each category can have products or further subcategories under it. These categories are fetched by making a GET request to the **CATEGORY URL**.
 
+<aside class="notice">
+CATEGORY URL:<br/>
+https://abcd.my39shop.com/api/v1/store/categories
+</aside>
+
+
 > CATEGORY URL
 
-```API
-https://abcd.my39shop.com/api/v1/store/categories
+```json
+{
+ "categories":[
+   {"id":5461,"name":"Living Room","parent_id":null,"position":null,"image_url":null},
+   {"id":5462,"name":"Bed Room","parent_id":null,"position":null,"image_url":null},
+   {"id":5463,"name":"Out Door","parent_id":null,"position":null,"image_url":null},
+   {"id":5887,"name":"Chair","parent_id":5461,"position":null,"image_url":null},
+   {"id":5886,"name":"Sofa","parent_id":5461,"position":null,"image_url":null},
+   {"id":5466,"name":"Cusion Cover","parent_id":5462,"position":null,"image_url":null}]
+}
 ```
 
 
@@ -27,7 +41,7 @@ https://abcd.my39shop.com/api/v1/store/categories
 
 > BANNER URL
 
-```API
+```api
 https://abcd.my39shop.com/api/v1/store/home_page/banners
 ```
 
@@ -36,7 +50,7 @@ https://abcd.my39shop.com/api/v1/store/home_page/banners
 
 > FEATURED PRODUCTS URL
 
-```API
+```api
 https://abcd.my39shop.com/api/v1/store/products/featured
 ```
 
@@ -48,7 +62,7 @@ https://abcd.my39shop.com/api/v1/store/products/featured
 
 > DISCOUNT COUPOUNS URL
 
-```API
+```api
 https://abcd.my39shop.com/api/v1/store/discount_coupons
 ```
 
