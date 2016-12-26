@@ -157,6 +157,8 @@ REMOVE COUPON URL:<br/>
 https://abcd.my39shop.com/api/v1/store/cart/{cart_token}/remove_discount_coupon
 </aside>
 
+>REMOVE COUPON URL RESPONSE:
+
 ```json
 {
 	"cart":{
@@ -187,8 +189,6 @@ https://abcd.my39shop.com/api/v1/store/cart/{cart_token}/remove_discount_coupon
 ```
 
 6. *Remove gift card*: To remove a gift card make a PATCH request to **REMOVE GIFT CARD URL**.
-
->REMOVE GIFT CARD URL:
 
 <aside class="notice">
 REMOVE GIFT CARD URL:<br/>
