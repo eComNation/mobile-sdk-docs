@@ -10,8 +10,13 @@ An option to change password will be shown in my account once customer is logged
 
 Password is changed in ChangePasswordActivity class using a PUT request to **CHANGE PASSWRD URL**.
 
->CHANGE PASSWORD URL:
-
-```API
+<aside class="notice">
+CHANGE PASSWORD URL:<br/>
 https://abcd.my39shop.com/api/v1/store/customer/change_password?current_password={current_password_value}&new_password={new_password_value}&confirm_password={new_password_value}&access_token={token_value}
+</aside>
+
+>CHANGE PASSWORD URL RESPONSE:
+
+```json
+{"result":"success"}
 ```

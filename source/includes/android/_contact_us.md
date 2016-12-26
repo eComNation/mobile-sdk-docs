@@ -14,8 +14,7 @@ The contact us screen has three sections,
 
 * The third section is a form which accepts different inputs from the customer like Name, Email, Phone and Comments. This info can then be submitted with a POST request to **SUBMIT FEEDBACK URL**.
 
->SUBMIT FEEDBACK URL:
-
-```API
+<aside class="notice">
+SUBMIT FEEDBACK URL:<br/>
 https://abcd.my39shop.com/api/v1/store/contact_us?email={email_value}&subject=Feedback&fields[name]={name_value}&fields[phone]={phone_value}&fields[note]={comments_value}
-```
+</aside>
